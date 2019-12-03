@@ -58,7 +58,7 @@ public class Node {
 	}
 	
 	public void nextCPT_line(int multiplicationOfPrentsValues, String st, int[] PrentValuePlace, BayesianNetwork BN, int RowNum) {
-		boolean Dbag = true; // true || false
+		boolean Dbag = false; // true || false
 		String[] tempWordArray = st.split(",");
 		if (tempWordArray.length != this.numOfParents+2*(this.VarValues.length-1)) {
 			throw new RuntimeException("This row dosn't present a part of "+this.name+" CPT.\ngot: "+st );
