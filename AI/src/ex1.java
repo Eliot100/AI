@@ -13,6 +13,7 @@ public class ex1 {
 		Queries.bagining(br, input, BN);
 		Queries.verticesBuild(br, input, BN);
 		File OutputFile = new File("output.txt");
+		OutputFile.createNewFile();
 		FileWriter fw = new FileWriter(OutputFile);
 		PrintWriter pw = new PrintWriter(fw);
 		Queries.writeOutpotFile(br, BN, pw);
