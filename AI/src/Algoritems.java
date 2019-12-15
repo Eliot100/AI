@@ -2,6 +2,7 @@
 public class Algoritems {
 
 	public static String VariableElimination(BayesianNetwork BN, String st) {
+		boolean Dbag= true; // true || false
 		String ans ="";
 		boolean flag1 = true;
 		boolean flag2 = true;
@@ -18,8 +19,31 @@ public class Algoritems {
 		}
 		Node target = BN.get(""+st.charAt(2));
 		String valTarget = st.substring(4, indexLine);
-//		String[] = st.substring(4, indexLine).split(regex, limit);
-		
+		String[] GivenPs = st.substring(indexLine+1, indexEndP).split(",");
+		String[] factorsSeq = st.substring( indexEndP+2, st.length() ).split("-");
+		String[] GivenNodes = new String[GivenPs.length];
+		String[] GivenValsByNode = new String[GivenPs.length];
+		for (int i = 0; i < GivenPs.length; i++) {
+			GivenNodes[i] = ""+GivenPs[i].charAt(0);
+			GivenValsByNode[i] = ""+GivenPs[i].substring(2);
+		}
+		if(Dbag) {
+			System.out.println("Node target : "+target.name);
+			System.out.println("value Target : "+valTarget);
+			System.out.print("GivenNodes : ");
+			for (int i = 0; i < GivenNodes.length; i++) {
+				System.out.print(GivenNodes[i]+" ");
+			}
+			System.out.print("\nGivenValsByNode : ");
+			for (int i = 0; i < GivenValsByNode.length; i++) {
+				System.out.print(GivenValsByNode[i]+" ");
+			}
+			System.out.print("\nfactorsSeq : ");
+			for (int i = 0; i < factorsSeq.length; i++) {
+				System.out.print(factorsSeq[i]+" ");
+			}
+			System.out.println("\n");
+		}
 		return ans;
 	}
 

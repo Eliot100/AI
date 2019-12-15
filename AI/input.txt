@@ -17,8 +17,8 @@ Var A
 Values: true,false
 Parents: B,E
 CPT:
-true,true,=true,0.95
 true,false,=true,0.94
+true,true,=true,0.95
 false,true,=true,0.29
 false,false,=true,0.001
 

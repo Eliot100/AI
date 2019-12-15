@@ -38,9 +38,6 @@ public class Queries {
 
 
 	public static void verticesBuild(BufferedReader br, File Readingfile, BayesianNetwork BN) throws IOException {
-//		String st ;
-//		boolean Dbag = false; // true || false
-//		st = br.readLine();
 		
 		for (int i = 0; i < BN.size(); i++) {
 			nodeInit(br,Readingfile,BN);

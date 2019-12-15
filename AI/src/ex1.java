@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 public class ex1 {
 	public static void main(String[] args) throws IOException  {
-		boolean Dbag = true; // true || false
+		boolean Dbag = false; // true || false
 		File input = new File("input.txt");
 		BayesianNetwork BN = new BayesianNetwork();
 		BufferedReader br = new BufferedReader(new FileReader(input)); 
