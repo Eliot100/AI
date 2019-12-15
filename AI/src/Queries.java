@@ -51,62 +51,9 @@ public class Queries {
 			Node tempNode = it.next();
 			BufferedReader brTemp = new BufferedReader(new FileReader( tempNode.cptText));
 			tempNode.getCPT(brTemp, BN);
+			brTemp.close();
+			tempNode.cptText.delete();
 		}
-
-//		for (Map.Entry<Integer, Node> entry : sorted.entrySet()){ 
-//			if(Dbag) {System.out.println(entry.getValue().name);}
-//			Node mapNode = BN.nodesHash.get(entry.getValue().name);
-//			if(st.length() != 5 || !st.substring(0,4).equals("Var ")) {//
-//				if(Dbag){System.out.println(st);}
-//				throw new RuntimeException("This isn't a Var like suppose to be.");
-//			}
-//			if(st.substring(0,4) == "Var " && st.substring(5,st.length()) != mapNode.name ) {
-//				if(Dbag){System.out.println();}
-//				throw new RuntimeException("The Var "+mapNode+" suppose to be here insted we got: "+st.substring(5,st.length()) );
-//			}
-//			st = br.readLine();
-//
-//			if (st.length() < 9 || !st.substring(0,8).equals( "Values: ")) {
-//				if(Dbag){System.out.println(st.substring(0,8)+!st.substring(0,8).equals( "Values: "));}
-//				throw new RuntimeException("This isn't a Values like suppose to be.");
-//			}
-//			String[] VarValues = st.substring(8,st.length()).split(",");
-//			mapNode.VarValues = VarValues;
-//			st = br.readLine();
-//
-//			if (st.length() < 10 || !st.substring(0,9).equals("Parents: ")) {
-//				if(Dbag){System.out.println();}
-//				throw new RuntimeException("This isn't a Parents like suppose to be.");
-//			}
-//			String[] ParentsNames = st.substring(9,st.length()).split(",");
-//			mapNode.ParentsNames = ParentsNames;
-//			mapNode.numOfParents = ParentsNames.length;
-//			if(mapNode.numOfParents == 1 && ParentsNames[0].equals("none")) {
-//				mapNode.numOfParents = 0;
-//			}
-//			mapNode.Parents = new Node[mapNode.numOfParents];
-//			for (int i = 0; i < mapNode.numOfParents; i++) {
-//				mapNode.Parents[i] = BN.nodesHash.get(ParentsNames[i]);
-//			}
-//
-//			if(Dbag){System.out.println("Number of parents = "+mapNode.numOfParents);}
-//			st = br.readLine();
-//			if (!st.equals("CPT:")) {
-//				if(Dbag){System.out.println();}
-//				throw new RuntimeException("This isn't a CPT like suppose to be.");
-//			}
-//			mapNode.getCPT(br, BN); 
-//			st = br.readLine();
-//
-//			if(st == null || !st.isEmpty() ) {
-//				if(Dbag){System.out.println(st);}
-//				throw new RuntimeException("");
-//			}else if(mapNode.place != BN.nodesHash.size()-1)
-//				st = br.readLine();
-//			if(Dbag) {System.out.println("CPT:");}
-//			if(Dbag) {Node.printCPT(BN, mapNode.name);}
-//			if(Dbag) {System.out.println("");}
-//		}
 
 	}
 
@@ -165,19 +112,6 @@ public class Queries {
 		} else {
 			throw new RuntimeException("This isn't the right row. (4):\n"+st);
 		}
-		
-//		mapNode.getCPT(br, BN); 
-//		st = br.readLine();
-//
-//		if(st == null || !st.isEmpty() ) {
-//			if(Dbag){System.out.println(st);}
-//			throw new RuntimeException("");
-//		}else if(mapNode.place != BN.nodesHash.size()-1)
-//			st = br.readLine();
-//		if(Dbag) {System.out.println("CPT:");}
-//		if(Dbag) {Node.printCPT(BN, mapNode.name);}
-//		if(Dbag) {System.out.println("");}
-//	}
 	}
 
 
