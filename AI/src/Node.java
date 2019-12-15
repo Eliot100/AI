@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 
 public class Node {
@@ -10,27 +11,30 @@ public class Node {
 	double[][] CPT;  
 	int numOfParents;  
 	int place; 
+	File cptText;
 	
 	public Node(String name) {
 		this.name = name;
+		this.VarValues = null;
 	}
-	
+
 	public String toSrting() {
 		return this.name;
 	}
 	
 	public void getCPT(BufferedReader br, BayesianNetwork BN) {
 		try {
+			boolean Dbag= false; // true || false
 			int x = 1;
 			for (int i = 0; i < this.numOfParents; i++) {
-				x *= BN.nodesHash.get(this.ParentsNames[i]).VarValues.length;
+				x *= BN.get(this.ParentsNames[i]).VarValues.length;
 			}
 			this.CPT = new double[x][this.VarValues.length];
 			String st = br.readLine();
 			int[] PrentValuePlace = new int[this.numOfParents];
-			int multiplicationOfPrentsValues = 1;
+			int mulOfPrentsValues = 1;
 			for (int i = 0; i < this.numOfParents; i++) {
-				multiplicationOfPrentsValues *= this.Parents[i].VarValues.length;
+				mulOfPrentsValues *= this.Parents[i].VarValues.length;
 			}
 			int SwithValueIndex = 1;
 			int recacl = 1;
@@ -43,17 +47,19 @@ public class Node {
 				SwithValueIndex *=this.Parents[i].VarValues.length;
 			}
 			
-			for (int RowNum = 0; RowNum < multiplicationOfPrentsValues; RowNum++) {
+			for (int RowNum = 0; RowNum < mulOfPrentsValues; RowNum++) {
 				for (int i = 0; i < this.numOfParents; i++) {
 					PrentValuePlace[i] = ((int) RowNum / PrentSwithValueIndex[i]) % PrentRecaclValueIndex[i];
 				}
-				this.nextCPT_line(multiplicationOfPrentsValues, st, PrentValuePlace, BN, RowNum);
-				if(RowNum !=multiplicationOfPrentsValues-1)
+				if(Dbag){System.out.println(st);}
+				this.nextCPT_line(mulOfPrentsValues, st, PrentValuePlace, BN, RowNum);
+				if(RowNum !=mulOfPrentsValues-1)
 					st = br.readLine();
 			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new RuntimeException("");
 		}
 	}
 	

@@ -26,6 +26,15 @@ public class BayesianNetwork {
 		return itr;
 	}
 
-
-
+	public int size() {
+		return this.nodesHash.size();
+	}
+	
+	public Node get(String nodeNeme) {
+		return this.nodesHash.get(nodeNeme);
+	}
+	
+	public void put(String nodeNeme, Node n) {
+		this.nodesHash.put(nodeNeme, n);
+	}
 }
