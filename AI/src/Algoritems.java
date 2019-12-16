@@ -27,6 +27,10 @@ public class Algoritems {
 			GivenNodes[i] = ""+GivenPs[i].charAt(0);
 			GivenValsByNode[i] = ""+GivenPs[i].substring(2);
 		}
+		Factor[] arrayF = new Factor[factorsSeq.length];
+		for (int i = 0; i < factorsSeq.length; i++) {
+			arrayF[i] = new Factor(BN.get(factorsSeq[i]).CPT, BN.get(factorsSeq[i]).PrentnumSwithValueIndex, BN.get(factorsSeq[i]).ParentsNames);
+		}
 		if(Dbag) {
 			System.out.println("Node target : "+target.name);
 			System.out.println("value Target : "+valTarget);
@@ -52,5 +56,7 @@ public class Algoritems {
 
 		return ans;
 	}
+	
+	
 	
 }

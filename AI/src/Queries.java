@@ -119,7 +119,6 @@ public class Queries {
 		}
 		st = br.readLine();
 
-		pw.println("Hellow");
 		while ((st = br.readLine()) != null) {
 			if(st.contains("P(") && st.contains(")")) {
 				pw.println( Algoritems.VariableElimination(BN, st) );
