@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
-public class ex1 {
+public class Ex1 {
 	public static void main(String[] args) throws IOException  {
 		boolean Dbag = false; // true || false
 		File input = new File("input.txt");

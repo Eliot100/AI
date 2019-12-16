@@ -48,7 +48,7 @@ public class Algoritems {
 	}
 
 	public static String BayesBall(BayesianNetwork BN, String st) {
-		String ans ="";
+		String ans ="\n";
 
 		return ans;
 	}

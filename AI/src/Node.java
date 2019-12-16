@@ -12,6 +12,7 @@ public class Node {
 	int numOfParents;  
 	int place; 
 	File cptText;
+	int[] PrentnumSwithValueIndex;
 	
 	public Node(String name) {
 		this.name = name;
@@ -65,6 +66,7 @@ public class Node {
 			PrentnumSwithValueIndex[i] = SwithValueIndex;
 			SwithValueIndex *= this.Parents[i].VarValues.length;
 		}
+		this.PrentnumSwithValueIndex = PrentnumSwithValueIndex;
 		if(Dbag){System.out.println(this.name);}
 		if(Dbag){System.out.println(this.numOfParents);}
 		int RowNum = 0;
