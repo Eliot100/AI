@@ -1,25 +1,173 @@
 
 public class Factor {
-	double[][] matrix;
-	int[] PrentnumSwithValueIndex;
-	String[] ParentsNames;
-	
-	public Factor(double[][] matrix, int[] PrentnumSwithValueIndex, String[] ParentsNames) {
+	String[][] matrix = null; // The variables for the probability 
+	double[] unknown = null; // The probability (0-1)
+	char[] known = null; // The chars the factor gets 
+	Factor[] Parents = null; // The factor's parent factors
+	public Factor() 
+	{
+		;
+	}
+	public Factor(String[][] matrix, Factor[] Parents,double[] unknown,char[] known)
+	{
 		this.matrix = matrix;
-		this.PrentnumSwithValueIndex = PrentnumSwithValueIndex;
-		this.ParentsNames = ParentsNames;
+		this.unknown = unknown;
+		this.known = known;
+		this.Parents = Parents;
 	}
 	
+	public Factor(Factor f1) 
+	{
+		this.matrix = f1.matrix;
+		this.Parents = f1.Parents;
+		this.known = f1.known;
+		this.unknown = f1.unknown;
+	}
 
-	public static Factor JoiningFactors(Factor f1, Factor f2) {
+	public Factor JoiningFactors(Factor f1, Factor f2)
+	{
+		Factor joined = new Factor();
+		int counter = count_unique(f1.known, f2.known);
+		joined.matrix = new String[(int)Math.pow(2.0, (double)(counter))][counter]; // needs improvement.
 		
 		
-		return f1;
+		return joined;
 	}
 	
-	public Factor Eliminaton(Factor f1 ) {
-		
-		
-		return f1;
+	public int count_unique(char[] c1, char[] c2) 
+	{
+		int counter = c1.length-1;
+		for (int i = 0; i < c2.length; i++)
+		{
+			if(!contains(c1, c2[i]))
+				counter++;
+		}
+		return counter;
+	}
+	
+	public  boolean contains(char[] c1, char car) 
+	{
+		for (int i = 0; i < c1.length; i++)
+		{
+			if(c1[i] == car)
+				return true;
+		}
+		return false;
+	} 
+	/**
+	 * This function eliminates the second factor from the first one.
+	 * @param f1 - The factor from which a factor is to be eliminated.
+	 * @param toeliminate - The factor to eliminate (assuming the know array is of length 1).
+	 * @return Returns the first factor when the second factor is eliminated from it. 
+	 */
+	public Factor Eliminaton(Factor f1 , Factor toeliminate)
+	{
+		// call joiningFactors
+		Factor f2 = new Factor();
+		f2.matrix = new String[f1.matrix.length-1][f1.matrix[0].length-1];
+		String[] arr = new String[f1.matrix.length-1];
+		int[] removebycol = new int[f1.matrix[0].length]; 
+		for (int i = 0; i < f1.matrix.length; i++) 
+		{
+			arr = make_arr(f1,i,toeliminate);
+			removebycol = makeremovebycol(f1, i, toeliminate);
+			f2.matrix[i] = arr;
+			f2.unknown[i] = get_value_to_merge(arr, f1, removebycol);
+		}
+		f2.known = makeknown(f1, toeliminate);
+		return f2;
+	}
+	
+	public char[] makeknown(Factor f1, Factor toeliminate) 
+	{
+		char[] arr = new char[f1.known.length-toeliminate.known.length];
+		int counter = 0;
+		for (int i = 0; i < f1.known.length; i++)
+		{
+			if(!contains(toeliminate.known, f1.known[i])) 
+			{
+				arr[counter] = f1.known[i];
+				counter++;
+			}
+		}
+		return arr;
+	}
+	
+	public int[] makeremovebycol(Factor f1, int row, Factor toeliminate) 
+	{
+		int[] arr = new int[f1.known.length-toeliminate.known.length];
+		int counter = 0;
+		for (int i = 0; i < f1.known.length; i++)
+		{
+			if(!contains(toeliminate.known,f1.known[i])) 
+			{
+				arr[counter] = i;
+				counter++;	
+			}	
+		}
+		return arr;
+	}
+	public String[] make_arr(Factor f1, int row, Factor toeliminate) 
+	{
+		String[] arr = new String[f1.known.length-toeliminate.known.length];
+		int counter = 0;
+		for (int i = 0; i < f1.known.length; i++)
+		{
+			if(!contains(toeliminate.known,f1.known[i])) 
+			{
+				arr[counter] = f1.matrix[row][i];
+				counter++;	
+			}	
+		}
+		return arr;
+	}
+	
+	public double get_value_to_merge(String[] arr, Factor f1, int[] removebycol) 
+	{
+		double sum = 0;
+		for (int i = 0; i < f1.matrix.length; i++)
+		{
+			if(is_row_included(arr, f1.matrix[i], removebycol))
+				sum+=f1.unknown[i];
+		}
+		return sum;
+	}
+	
+	public boolean is_row_included(String[] arr, String[] row, int[] removebycol) 
+	{
+		int counter = 0;
+		for (int i = 0; i < row.length; i++) 
+		{
+			
+			if(contains(removebycol, i)) 
+			{
+				if(!arr[i].equals(row[counter]))
+					return false;
+				counter++;
+			}
+			else
+				counter+=2;
+		}
+		return true;
+	}
+	
+	public int get_index_by_value(String[] arr, String s) 
+	{
+		for (int i = 0; i < arr.length; i++)
+		{
+			if(arr[i].equals(s))
+				return i;
+		}
+		return -1;
+	}
+	
+	public boolean contains(int[] arr, int q) 
+	{
+		for (int i = 0; i < arr.length; i++)
+		{
+			if(arr[i] == q)
+				return true;
+		}
+		return false;
 	}
 }
