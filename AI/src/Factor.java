@@ -8,18 +8,16 @@ public class Factor {
 	{
 		;
 	}
-	public Factor(String[][] matrix, Factor[] Parents,double[] unknown,char[] known)
+	public Factor(String[][] matrix, double[] unknown, char[] known)
 	{
 		this.matrix = matrix;
 		this.unknown = unknown;
 		this.known = known;
-		this.Parents = Parents;
 	}
 
 	public Factor(Factor f1) 
 	{
 		this.matrix = f1.matrix;
-		this.Parents = f1.Parents;
 		this.known = f1.known;
 		this.unknown = f1.unknown;
 	}

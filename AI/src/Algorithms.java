@@ -5,8 +5,6 @@
  */
 public class Algorithms {
 	/**
-	 * 
-	 * @param BN - our Bayesian Network
 	 * @param st - the String query
 	 * @return String that contain the query answer, comma
 	 * with The number of connection operations required by the algorithm to answer the query, comma, 
@@ -15,7 +13,7 @@ public class Algorithms {
 	 * 0.28417,7,16
 	 * 0.84902,7,12
 	 */
-	public static String VariableElimination(BayesianNetwork BN, String st) {
+	public static String VariableElimination( String st) {
 		boolean Dbag= true; // true || false
 		String ans ="";
 		boolean flag1 = true;
@@ -31,7 +29,7 @@ public class Algorithms {
 				flag2 =  false;
 			}
 		}
-		Node target = BN.get(""+st.charAt(2));
+		Node target = Ex1.BN.get(""+st.charAt(2));
 		String valTarget = st.substring(4, indexLine);
 		String[] GivenPs = st.substring(indexLine+1, indexEndP).split(",");
 		String[] factorsSeq = st.substring( indexEndP+2, st.length() ).split("-");
@@ -43,7 +41,7 @@ public class Algorithms {
 		}
 		Factor[] arrayF = new Factor[factorsSeq.length];
 //		for (int i = 0; i < factorsSeq.length; i++) {
-//			arrayF[i] = new Factor(BN.get(factorsSeq[i]).CPT, BN.get(factorsSeq[i]).PrentnumSwithValueIndex, BN.get(factorsSeq[i]).ParentsNames);
+//			arrayF[i] =  new Factor(Ex1.BN.get(factorsSeq[i]).CPT, Ex1.BN.get(factorsSeq[i]).PrentnumSwithValueIndex, Ex1.BN.get(factorsSeq[i]).ParentsNames);
 //		}
 		if(Dbag) {
 			System.out.println("Node target : "+target.name);
@@ -67,11 +65,10 @@ public class Algorithms {
 	
 	/**
 	 * We dosn't need to do this algorithm at the moment
-	 * @param BN - our Bayesian Network
 	 * @param st - the String query
 	 * @return String - the query answer.
 	 */
-	public static String BayesBall(BayesianNetwork BN, String st) {
+	public static String BayesBall( String st) {
 		String ans ="\n";
 
 		return ans;

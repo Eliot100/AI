@@ -37,7 +37,7 @@ public class Node {
 	 * @param br - is BufferedReader which contains lines containing probabilities by the Nodes parents Values  
 	 * @param BN - Our Bayesian Network 
 	 */
-	public void getCPT(BufferedReader br, BayesianNetwork BN) {
+	public void getCPT(BufferedReader br) {
 		try {
 			boolean Dbag= false; // true || false
 			int x = 1;
@@ -49,7 +49,7 @@ public class Node {
 			
 			for (int RowNum = 0; RowNum < x; RowNum++) {
 				if(Dbag){System.out.println(st);}
-				this.nextCPT_line(st, BN);
+				this.nextCPT_line(st);
 				if(RowNum !=x-1)
 					st = br.readLine();
 			}
@@ -64,7 +64,7 @@ public class Node {
 	 * @param st - String that contain this node probability  
 	 * @param BN - Our Bayesian Network
 	 */
-	public void nextCPT_line( String st, BayesianNetwork BN) {
+	public void nextCPT_line( String st) {
 		boolean Dbag = false; // true || false
 		String[] tempWordArray = st.split(",");
 		if (tempWordArray.length != this.numOfParents+2*(this.VarValues.length-1)) {
@@ -91,7 +91,7 @@ public class Node {
 		String RowString = "";
 		for (int i = 0; i < this.numOfParents; i++) {
 			for (int j = 0; j < this.Parents[i].VarValues.length; j++) {
-				if(tempWordArray[i].equals(BN.get(this.ParentsNames[i]).VarValues[j])){
+				if(tempWordArray[i].equals(Ex1.BN.get(this.ParentsNames[i]).VarValues[j])){
 					RowNum += j*PrentSwithValueIndex[i];
 					RowString +=PrentSwithValueIndex[i]+" ";
 				}

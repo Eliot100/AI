@@ -17,7 +17,7 @@ public class Parts {
 	 * @param BN - our Bayesian Network
 	 * @throws IOException
 	 */
-	public static void bagining(BufferedReader br, BayesianNetwork BN) throws IOException {
+	public static void bagining(BufferedReader br) throws IOException {
 		String st;
 		boolean Dbag = false; // false  true
 		if((st = br.readLine()) == null || !st.contains("Network")) { 
@@ -30,9 +30,9 @@ public class Parts {
 				for (int i = 0; i < verticesNames.length; i++) {
 					Node n1 = new Node(verticesNames[i]);
 					n1.place = i;
-					BN.put(verticesNames[i], n1);
+					Ex1.BN.put(verticesNames[i], n1);
 				}
-				if(Dbag){System.out.println(BN.toSrting());}
+				if(Dbag){System.out.println(Ex1.BN.toSrting());}
 			} catch (RuntimeException e) {
 				throw new RuntimeException("The string: "+ st +" isn't represent Bayesian Network vertices.");
 			}
@@ -50,15 +50,15 @@ public class Parts {
 	 * @param BN - our Bayesian Network
 	 * @throws IOException
 	 */
-	public static void verticesBuild(BufferedReader br, BayesianNetwork BN) throws IOException {
-		for (int i = 0; i < BN.size(); i++) {
-			nodeInit(br,BN);
+	public static void verticesBuild(BufferedReader br) throws IOException {
+		for (int i = 0; i < Ex1.BN.size(); i++) {
+			nodeInit(br);
 		}
-		Iterator<Node> it = BN.iteretor(); 
+		Iterator<Node> it = Ex1.BN.iteretor(); 
 		while (it.hasNext()) {
 			Node tempNode = it.next();
 			BufferedReader brTemp = new BufferedReader(new FileReader( tempNode.cptText));
-			tempNode.getCPT(brTemp, BN);
+			tempNode.getCPT(brTemp);
 			brTemp.close();
 			tempNode.cptText.delete();
 		}
@@ -70,14 +70,14 @@ public class Parts {
 	 * @param BN - our Bayesian Network
 	 * @throws IOException
 	 */
-	private static void nodeInit(BufferedReader br, BayesianNetwork BN) throws IOException {
+	private static void nodeInit(BufferedReader br) throws IOException {
 		boolean Dbag = false; // true || false
 		String st ;
 		st = br.readLine();
 		Node tempNode;
 		if(st.substring(0,4).equals("Var ") ) {
 			if(Dbag){System.out.println(st.substring(4,st.length()));}
-			tempNode = BN.get(st.substring(4,st.length()));
+			tempNode = Ex1.BN.get(st.substring(4,st.length()));
 		} else 
 			throw new RuntimeException("This isn't the right row. (1):\n"+st);
 		
@@ -106,7 +106,7 @@ public class Parts {
 		}
 		tempNode.Parents = new Node[tempNode.numOfParents];
 		for (int i = 0; i < tempNode.numOfParents; i++) {
-			tempNode.Parents[i] = BN.get(ParentsNames[i]);
+			tempNode.Parents[i] = Ex1.BN.get(ParentsNames[i]);
 		}
 		st = br.readLine();
 		if(Dbag){System.out.println("Number of parents = "+tempNode.numOfParents);}
@@ -133,7 +133,7 @@ public class Parts {
 	 * @param pw - the PrintWriter of the output file
 	 * @throws IOException
 	 */
-	public static void writeOutputFile(BufferedReader br, BayesianNetwork BN, PrintWriter pw) throws IOException {
+	public static void writeOutputFile(BufferedReader br, PrintWriter pw) throws IOException {
 		String st = br.readLine();
 		if(!st.contains("Queries")) {
 			throw new RuntimeException("This isn't the Queries part.");
@@ -142,9 +142,9 @@ public class Parts {
 
 		while ((st = br.readLine()) != null) {
 			if(st.contains("P(") && st.contains(")")) {
-				pw.println( Algorithms.VariableElimination(BN, st) );
+				pw.println( Algorithms.VariableElimination( st) );
 			} else if( st.contains("-") && st.contains("|") ) {
-				pw.println( Algorithms.BayesBall(BN, st) );
+				pw.println( Algorithms.BayesBall( st) );
 			}
 		}
 	}
