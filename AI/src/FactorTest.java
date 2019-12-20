@@ -17,14 +17,8 @@ class FactorTest {
 	@Test
 	void testMakeremovebycol()
 	{
-		
-	}
-
-	@Test
-	void testMake_arr()
-	{
 		Factor f1 = new Factor();
-		char[] known = {'a','b','c'};
+		String[] known = {"a","b","c"};
 		f1.known = known;
 		String[] row1 = {"T","F","T"};
 		String[] row2 = {"T","F","F"};
@@ -33,7 +27,32 @@ class FactorTest {
 		f1.matrix = matrix1;
 		int row = 0;
 		Factor toeliminate = new Factor();
-		char[] known2 = {'b'};
+		String[] known2 = {"b"};
+		toeliminate.known = known2;
+		int[] arr = f1.makeremovebycol(f1, row, toeliminate);
+		int[] expected = {0,2};
+		if(arr.length!=expected.length)
+			fail("Not the same length");
+		for (int i = 0; i < expected.length; i++)
+		{
+			assertEquals(expected[i], arr[i]);
+		}
+	}
+
+	@Test
+	void testMake_arr()
+	{
+		Factor f1 = new Factor();
+		String[] known = {"a","b","c"};
+		f1.known = known;
+		String[] row1 = {"T","F","T"};
+		String[] row2 = {"T","F","F"};
+		String[] row3 = {"F","F","T"};
+		String[][] matrix1 = {row1,row2,row3};
+		f1.matrix = matrix1;
+		int row = 0;
+		Factor toeliminate = new Factor();
+		String[] known2 = {"b"};
 		toeliminate.known = known2;
 		String[] arr = f1.make_arr(f1, row, toeliminate);
 		String[] expected = {"T","T"};
@@ -43,7 +62,6 @@ class FactorTest {
 		{
 			assertEquals(expected[i], arr[i]);
 		}
-		
 	}
 
 	@Test
@@ -61,7 +79,6 @@ class FactorTest {
 		f1.unknown = unknown;
 		double expected = f1.get_value_to_merge(arr, f1, removebycol);
 		assertEquals(expected, 0.2);
-		
 	}
 
 	@Test

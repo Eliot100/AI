@@ -2,22 +2,25 @@
 public class Factor {
 	String[][] matrix = null; // The variables for the probability 
 	double[] unknown = null; // The probability (0-1)
-	char[] known = null; // The chars the factor gets 
-	Factor[] Parents = null; // The factor's parent factors
+	String[] known = null; // The chars the factor gets 
+	//Factor[] Parents = null; // The factor's parent factors
 	public Factor() 
 	{
 		;
 	}
-	public Factor(String[][] matrix, double[] unknown, char[] known)
+	public Factor(String[][] matrix, double[] unknown, String[] known)
 	{
 		this.matrix = matrix;
 		this.unknown = unknown;
 		this.known = known;
+		
+		//this.Parents = Parents;
 	}
 
 	public Factor(Factor f1) 
 	{
 		this.matrix = f1.matrix;
+		//this.Parents = f1.Parents;
 		this.known = f1.known;
 		this.unknown = f1.unknown;
 	}
@@ -31,7 +34,7 @@ public class Factor {
 		return joined;
 	}
 
-	public int count_unique(char[] c1, char[] c2) 
+	public int count_unique(String[] c1, String[] c2) 
 	{
 		int counter = c1.length-1;
 		for (int i = 0; i < c2.length; i++)
@@ -50,7 +53,18 @@ public class Factor {
 				return true;
 		}
 		return false;
+	}
+	
+	public  boolean contains(String[] c1, String car) 
+	{
+		for (int i = 0; i < c1.length; i++)
+		{
+			if(c1[i].equals(car))
+				return true;
+		}
+		return false;
 	} 
+	
 	/**
 	 * This function eliminates the second factor from the first one.
 	 * @param f1 - The factor from which a factor is to be eliminated.
@@ -75,9 +89,9 @@ public class Factor {
 		return f2;
 	}
 
-	public char[] makeknown(Factor f1, Factor toeliminate) 
+	public String[] makeknown(Factor f1, Factor toeliminate) 
 	{
-		char[] arr = new char[f1.known.length-toeliminate.known.length];
+		String[] arr = new String[f1.known.length-toeliminate.known.length];
 		int counter = 0;
 		for (int i = 0; i < f1.known.length; i++)
 		{
@@ -92,9 +106,9 @@ public class Factor {
 	
 	/**
 	 * 
-	 * @param f1 -  
-	 * @param row - 
-	 * @param toeliminate - 
+	 * @param f1 - The factor from which we eliminate.
+	 * @param row - The row to make the needed array from.
+	 * @param toeliminate - The elimination Factor.
 	 * @return The array of columns to check. 
 	 */
 	public int[] makeremovebycol(Factor f1, int row, Factor toeliminate) 
