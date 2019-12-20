@@ -48,14 +48,28 @@ public class Algorithms {
 		}
 		Factor[] arrayF = new Factor[Ex1.BN.size()];
 		Iterator<Node> it = Ex1.BN.iteretor();
-		int u = 0;
+		int cont = 0;
 		while(it.hasNext()) {
 			Node tempNode = it.next();
-			arrayF[u] = tempNode.CTPtoFactor();
-			u++;
+			arrayF[cont] = tempNode.CTPtoFactor();
+			cont++;
 		}
 		for (int i = 0; i < toEliminate.length; i++) {
-//			toEliminate[i]
+			boolean[] flags = ifEliminate(arrayF, toEliminate[i]);
+			cont = 0;
+			for (int j = 0; j < flags.length; j++) {
+				if(flags[j] == true)
+					cont++;
+			}
+			Factor[] Factors2Eliminate = new Factor[cont];
+			cont = 0;
+			for (int j = 0; j < arrayF.length; j++) {
+				if(flags[j]) {
+					Factors2Eliminate[cont] = arrayF[j];
+					cont++;
+				}
+				
+			}
 		}
 		if(Dbag) {
 			System.out.println("Node target : "+target.name);
@@ -92,15 +106,15 @@ public class Algorithms {
 		return ans;
 	}
 	
-	public static Factor[] Eliminate( Factor[] allFactors, String nodeNameToEliminate) {
+	private static boolean[] ifEliminate( Factor[] allFactors, String nodeNameToEliminate) {
 		boolean[] flags = new boolean[allFactors.length];
 		for (int i = 0; i < allFactors.length; i++) {
 			for (int j = 0; flags[i] && j < allFactors[i].known.length; j++) {
 				if(allFactors[i].known[j] == nodeNameToEliminate)
 					flags[i] = true;
-				
 			}
 		}
-		return null;
+		
+		return flags;
 	}
 }

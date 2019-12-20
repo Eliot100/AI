@@ -4,6 +4,7 @@ public class Factor {
 	double[] unknown = null; // The probability (0-1)
 	String[] known = null; // The Strings the factor gets 
 	int[] switchByVal = null; // switchByVal[i] is the number when known[i] is Repeated itself
+	String proba = null;
 	//Factor[] Parents = null; // The factor's parent factors
 	public Factor() {;}
 	

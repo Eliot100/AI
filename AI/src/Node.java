@@ -120,29 +120,27 @@ public class Node {
 	}
 	
 	public Factor CTPtoFactor() {
-		String[] NodeGiven = new String[this.numOfParents+1];
-		NodeGiven[0] = this.name;
-		for (int i = 1; i < this.ParentsNames.length; i++) {
-			NodeGiven[i] = this.ParentsNames[i];
-		}
+		
 		double[] probabilities = new double[this.CPT[0].length*this.CPT.length];
 		for (int i = 0; i < this.CPT[0].length; i++) 
 			for (int j = 0; j < this.CPT.length; j++) 
 				probabilities[j*this.VarValues.length+i] = this.CPT[j][i];
 		
-		int[] switchByVal = new int[this.numOfParents+1];
-		switchByVal[0]= 1;
+		String pernts ="";
 		for (int i = 0; i < this.numOfParents; i++) {
-			switchByVal[i+1]= this.PrentSwithVal[i];
+			if (i == this.numOfParents-1)
+				pernts += this.ParentsNames[i];
+			else
+				pernts += this.ParentsNames[i]+",";
 		}
-		if(this.numOfParents > 0) 
-			switchByVal[0]= switchByVal[1]*this.VarValues.length;
-		else
-			switchByVal[0]= 1;
 		Factor f = new Factor();
-		f.known = NodeGiven;
-		f.switchByVal = switchByVal;
+		f.known = this.ParentsNames;
+		f.switchByVal = this.PrentSwithVal;
 		f.unknown = probabilities;
+		if(this.numOfParents == 0)
+			f.proba = "P("+this.name+")";
+		else 
+			f.proba = "P("+this.name+"|"+pernts+")";
 		return f;
 		
 	}
