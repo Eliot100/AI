@@ -8,14 +8,14 @@ public class Factor {
 	{
 		;
 	}
-	public Factor(String[][] matrix, Factor[] Parents, double[] unknown, char[] known)
+	public Factor(String[][] matrix, Factor[] Parents,double[] unknown,char[] known)
 	{
 		this.matrix = matrix;
 		this.unknown = unknown;
 		this.known = known;
 		this.Parents = Parents;
 	}
-	
+
 	public Factor(Factor f1) 
 	{
 		this.matrix = f1.matrix;
@@ -29,11 +29,10 @@ public class Factor {
 		Factor joined = new Factor();
 		int counter = count_unique(f1.known, f2.known);
 		joined.matrix = new String[(int)Math.pow(2.0, (double)(counter))][counter]; // needs improvement.
-		
-		
+
 		return joined;
 	}
-	
+
 	public int count_unique(char[] c1, char[] c2) 
 	{
 		int counter = c1.length-1;
@@ -44,7 +43,7 @@ public class Factor {
 		}
 		return counter;
 	}
-	
+
 	public  boolean contains(char[] c1, char car) 
 	{
 		for (int i = 0; i < c1.length; i++)
@@ -77,7 +76,7 @@ public class Factor {
 		f2.known = makeknown(f1, toeliminate);
 		return f2;
 	}
-	
+
 	public char[] makeknown(Factor f1, Factor toeliminate) 
 	{
 		char[] arr = new char[f1.known.length-toeliminate.known.length];
@@ -93,6 +92,13 @@ public class Factor {
 		return arr;
 	}
 	
+	/**
+	 * 
+	 * @param f1 -  
+	 * @param row - 
+	 * @param toeliminate - 
+	 * @return The array of columns to check. 
+	 */
 	public int[] makeremovebycol(Factor f1, int row, Factor toeliminate) 
 	{
 		int[] arr = new int[f1.known.length-toeliminate.known.length];
@@ -107,6 +113,14 @@ public class Factor {
 		}
 		return arr;
 	}
+
+	/**
+	 * 
+	 * @param f1 - The factor from which we eliminate.
+	 * @param row - The row to make the needed array from.
+	 * @param toeliminate - The elimination Factor.
+	 * @return THe array needed without the eliminate Factor.
+	 */
 	public String[] make_arr(Factor f1, int row, Factor toeliminate) 
 	{
 		String[] arr = new String[f1.known.length-toeliminate.known.length];
@@ -121,24 +135,37 @@ public class Factor {
 		}
 		return arr;
 	}
-	
+
+	/**
+	 * 
+	 * @param arr - The array that is needed.
+	 * @param f1 - The factor from which the prbabilites needed are.
+	 * @param removebycol - The array of columns to check
+	 * @return The value of the row
+	 */
 	public double get_value_to_merge(String[] arr, Factor f1, int[] removebycol) 
 	{
 		double sum = 0;
 		for (int i = 0; i < f1.matrix.length; i++)
 		{
-			if(is_row_included(arr, f1.matrix[i], removebycol))
+			if(is_row_included(f1.matrix[i], arr, removebycol))
 				sum+=f1.unknown[i];
 		}
 		return sum;
 	}
-	
+
+	/**
+	 * 
+	 * @param row - The row that is needed (Smaller).
+	 * @param arr - The row from the matrix of the factor (Bigger).
+	 * @param removebycol - Array of columns to check.
+	 * @return true if row in the places specified in removebycol equals arr. 
+	 */
 	public boolean is_row_included(String[] arr, String[] row, int[] removebycol) 
 	{
 		int counter = 0;
 		for (int i = 0; i < row.length; i++) 
 		{
-			
 			if(contains(removebycol, i)) 
 			{
 				if(!arr[i].equals(row[counter]))
@@ -150,7 +177,7 @@ public class Factor {
 		}
 		return true;
 	}
-	
+
 	public int get_index_by_value(String[] arr, String s) 
 	{
 		for (int i = 0; i < arr.length; i++)
@@ -160,7 +187,7 @@ public class Factor {
 		}
 		return -1;
 	}
-	
+
 	public boolean contains(int[] arr, int q) 
 	{
 		for (int i = 0; i < arr.length; i++)
