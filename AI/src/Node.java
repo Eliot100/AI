@@ -1,7 +1,10 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-
+/**
+ * @author Eli Ruvinov
+ * In this class we create the Node that we using in the Bayesian Network
+ */
 public class Node {
 
 	String[] ParentsNames;   
@@ -14,15 +17,26 @@ public class Node {
 	File cptText;
 	int[] PrentnumSwithValueIndex;
 	
+	/**
+	 * This function initialize Node by: name
+	 */
 	public Node(String name) {
 		this.name = name;
 		this.VarValues = null;
 	}
-
+	
+	/**
+	 * @return String - the node name 
+	 */
 	public String toSrting() {
 		return this.name;
 	}
 	
+	/**
+	 * This function initialize the CPT of this node
+	 * @param br - is BufferedReader which contains lines containing probabilities by the Nodes parents Values  
+	 * @param BN - Our Bayesian Network 
+	 */
 	public void getCPT(BufferedReader br, BayesianNetwork BN) {
 		try {
 			boolean Dbag= false; // true || false
@@ -39,13 +53,17 @@ public class Node {
 				if(RowNum !=x-1)
 					st = br.readLine();
 			}
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("");
 		}
 	}
 	
+	/**
+	 * This function sets a row in the CTP matrix
+	 * @param st - String that contain this node probability  
+	 * @param BN - Our Bayesian Network
+	 */
 	public void nextCPT_line( String st, BayesianNetwork BN) {
 		boolean Dbag = false; // true || false
 		String[] tempWordArray = st.split(",");

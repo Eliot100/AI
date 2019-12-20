@@ -8,7 +8,7 @@ public class Factor {
 	{
 		;
 	}
-	public Factor(String[][] matrix, Factor[] Parents,double[] unknown,char[] known)
+	public Factor(String[][] matrix, Factor[] Parents, double[] unknown, char[] known)
 	{
 		this.matrix = matrix;
 		this.unknown = unknown;

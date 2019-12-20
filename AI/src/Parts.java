@@ -6,9 +6,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
-public class Queries {
-
-	public static void bagining(BufferedReader br, File file, BayesianNetwork BN) throws IOException {
+/**
+ * @author Eli Ruvinov
+ * In this class we write 3 part of the work on the input file 
+ */
+public class Parts {
+	/**
+	 * In this function we insert the Nodes to our Bayesian Network
+	 * @param br - the BufferedReader of the input file
+	 * @param BN - our Bayesian Network
+	 * @throws IOException
+	 */
+	public static void bagining(BufferedReader br, BayesianNetwork BN) throws IOException {
 		String st;
 		boolean Dbag = false; // false  true
 		if((st = br.readLine()) == null || !st.contains("Network")) { 
@@ -20,7 +29,7 @@ public class Queries {
 				String[] verticesNames = ((String) st.subSequence(11, st.length())).split(",");
 				for (int i = 0; i < verticesNames.length; i++) {
 					Node n1 = new Node(verticesNames[i]);
-					n1.place =  i;
+					n1.place = i;
 					BN.put(verticesNames[i], n1);
 				}
 				if(Dbag){System.out.println(BN.toSrting());}
@@ -29,20 +38,22 @@ public class Queries {
 			}
 		} else {
 			if(Dbag){System.out.println(st.subSequence(0, 11));}
-			throw new RuntimeException("The file input: isn't a represent of Bayesian Network" );
-		}
-		if((st = br.readLine()) == null || !st.isEmpty() ) {
 			throw new RuntimeException("The file input isn't a represent of Bayesian Network" );
 		}
+		st = br.readLine();
 	}
 
-
-	public static void verticesBuild(BufferedReader br, File Readingfile, BayesianNetwork BN) throws IOException {
-		
+	/**
+	 * This function is building all the nodes from the input file
+	 * and their CTP 
+	 * @param br - the BufferedReader of the input file
+	 * @param BN - our Bayesian Network
+	 * @throws IOException
+	 */
+	public static void verticesBuild(BufferedReader br, BayesianNetwork BN) throws IOException {
 		for (int i = 0; i < BN.size(); i++) {
-			nodeInit(br,Readingfile,BN);
+			nodeInit(br,BN);
 		}
-		
 		Iterator<Node> it = BN.iteretor(); 
 		while (it.hasNext()) {
 			Node tempNode = it.next();
@@ -51,11 +62,15 @@ public class Queries {
 			brTemp.close();
 			tempNode.cptText.delete();
 		}
-
 	}
-
 	
-	private static void nodeInit(BufferedReader br, File Readingfile, BayesianNetwork BN) throws IOException {
+	/**
+	 * This function is initialize node Fields
+	 * @param br - the BufferedReader of the input file
+	 * @param BN - our Bayesian Network
+	 * @throws IOException
+	 */
+	private static void nodeInit(BufferedReader br, BayesianNetwork BN) throws IOException {
 		boolean Dbag = false; // true || false
 		String st ;
 		st = br.readLine();
@@ -63,9 +78,9 @@ public class Queries {
 		if(st.substring(0,4).equals("Var ") ) {
 			if(Dbag){System.out.println(st.substring(4,st.length()));}
 			tempNode = BN.get(st.substring(4,st.length()));
-		} else {
+		} else 
 			throw new RuntimeException("This isn't the right row. (1):\n"+st);
-		}
+		
 		st = br.readLine();
 		if(st.substring(0,8).equals( "Values: ")) {
 			String[] VarValues = st.substring(8,st.length()).split(",");
@@ -74,18 +89,18 @@ public class Queries {
 			for (int i = 0; i < VarValues.length; i++) {
 				tempNode.VarValues[i] = VarValues[i];
 			}
-		} else {
+		} else 
 			throw new RuntimeException("This isn't the right row. (2):\n"+st);
-		}
+		
 		st = br.readLine();
 		String[] ParentsNames = null;
 		if (st.substring(0,9).equals("Parents: ")) {
 			ParentsNames = st.substring(9,st.length()).split(",");
 			tempNode.ParentsNames = ParentsNames;
 			tempNode.numOfParents = ParentsNames.length;
-		} else {
+		} else 
 			throw new RuntimeException("This isn't the right row. (3):\n"+st);
-		}
+		
 		if(tempNode.numOfParents == 1 && ParentsNames[0].equals("none")) {
 			tempNode.numOfParents = 0;
 		}
@@ -106,13 +121,19 @@ public class Queries {
 				(st = br.readLine()).replace(" ", "");
 			}
 			pw.close();
-		} else {
+		} else 
 			throw new RuntimeException("This isn't the right row. (4):\n"+st);
-		}
+		
 	}
-
-
-	public static void writeOutpotFile(BufferedReader br, BayesianNetwork BN, PrintWriter pw) throws IOException {
+	
+	/**
+	 * This function is writeing the output File 
+	 * @param br - the BufferedReader of the input file
+	 * @param BN - our Bayesian Network
+	 * @param pw - the PrintWriter of the output file
+	 * @throws IOException
+	 */
+	public static void writeOutputFile(BufferedReader br, BayesianNetwork BN, PrintWriter pw) throws IOException {
 		String st = br.readLine();
 		if(!st.contains("Queries")) {
 			throw new RuntimeException("This isn't the Queries part.");
@@ -121,9 +142,9 @@ public class Queries {
 
 		while ((st = br.readLine()) != null) {
 			if(st.contains("P(") && st.contains(")")) {
-				pw.println( Algoritems.VariableElimination(BN, st) );
+				pw.println( Algorithms.VariableElimination(BN, st) );
 			} else if( st.contains("-") && st.contains("|") ) {
-				pw.println( Algoritems.BayesBall(BN, st) );
+				pw.println( Algorithms.BayesBall(BN, st) );
 			}
 		}
 	}

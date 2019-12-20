@@ -7,18 +7,21 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 
 public class Ex1 {
+	/*
+	 * this function is the main function in this project
+	 */
 	public static void main(String[] args) throws IOException  {
 		boolean Dbag = false; // true || false
 		File input = new File("input.txt");
 		BayesianNetwork BN = new BayesianNetwork();
 		BufferedReader br = new BufferedReader(new FileReader(input)); 
-		Queries.bagining(br, input, BN);
-		Queries.verticesBuild(br, input, BN);
+		Parts.bagining(br, BN);
+		Parts.verticesBuild(br, BN);
 		File OutputFile = new File("output.txt");
 		OutputFile.createNewFile();
 		FileWriter fw = new FileWriter(OutputFile);
 		PrintWriter pw = new PrintWriter(fw);
-		Queries.writeOutpotFile(br, BN, pw);
+		Parts.writeOutputFile(br, BN, pw);
 		pw.close();
 		br.close();
 		if(Dbag) {
