@@ -1,13 +1,12 @@
 
 public class Factor {
-	String[][] matrix = null; // The variables for the probability 
+	String[][] matrix = null; // The variables for the probability  
 	double[] unknown = null; // The probability (0-1)
-	String[] known = null; // The chars the factor gets 
+	String[] known = null; // The Strings the factor gets 
+	int[] switchByVal = null; // switchByVal[i] is the number when known[i] is Repeated itself
 	//Factor[] Parents = null; // The factor's parent factors
-	public Factor() 
-	{
-		;
-	}
+	public Factor() {;}
+	
 	public Factor(String[][] matrix, double[] unknown, String[] known)
 	{
 		this.matrix = matrix;
@@ -29,7 +28,7 @@ public class Factor {
 	{
 		Factor joined = new Factor();
 		int counter = count_unique(f1.known, f2.known);
-		joined.matrix = new String[(int)Math.pow(2.0, (double)(counter))][counter]; // needs improvement.
+		joined.matrix = new String[(int) Math.pow(2.0, (double)(counter))][counter]; // needs improvement.
 
 		return joined;
 	}

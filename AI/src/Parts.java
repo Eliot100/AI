@@ -29,7 +29,6 @@ public class Parts {
 				String[] verticesNames = ((String) st.subSequence(11, st.length())).split(",");
 				for (int i = 0; i < verticesNames.length; i++) {
 					Node n1 = new Node(verticesNames[i]);
-					n1.place = i;
 					Ex1.BN.put(verticesNames[i], n1);
 				}
 				if(Dbag){System.out.println(Ex1.BN.toSrting());}

@@ -1,3 +1,4 @@
+import java.util.Iterator;
 
 /**
  * @author Eli and Dvir
@@ -14,35 +15,48 @@ public class Algorithms {
 	 * 0.84902,7,12
 	 */
 	public static String VariableElimination( String st) {
-		boolean Dbag= true; // true || false
+		boolean Dbag = false; // true || false
 		String ans ="";
 		boolean flag1 = true;
 		boolean flag2 = true;
-		int indexLine = 0, indexEndP = 0;
-		for (int i = 0; i < st.length() && flag2 ; i++) {
-			if (st.charAt(i)== '|' && flag1) {
-				indexLine = i;
+		boolean flag3 = true;
+		int indexLine = 0, indexEndP = 0, indexeq = 0;
+		for (int i = 0; flag3  ; i++) {
+			if (flag1 && st.charAt(i) == '=') {
+				indexeq = i;
 				flag1 =  false;
 			}
-			else if (st.charAt(i)== ')') {
-				indexEndP = i;
+			else if (!flag1 && flag2 && st.charAt(i)== '|' ) {
+				indexLine = i;
 				flag2 =  false;
+			} 
+			else if (!flag2 && st.charAt(i)== ')') {
+				indexEndP = i;
+				flag3 =  false;
 			}
 		}
-		Node target = Ex1.BN.get(""+st.charAt(2));
-		String valTarget = st.substring(4, indexLine);
+		Node target = Ex1.BN.get(""+st.substring(2, indexeq));
+		String valTarget = st.substring(indexeq+1, indexLine);
 		String[] GivenPs = st.substring(indexLine+1, indexEndP).split(",");
-		String[] factorsSeq = st.substring( indexEndP+2, st.length() ).split("-");
+		String[] toEliminate = st.substring( indexEndP+2, st.length() ).split("-");
 		String[] GivenNodes = new String[GivenPs.length];
 		String[] GivenValsByNode = new String[GivenPs.length];
 		for (int i = 0; i < GivenPs.length; i++) {
-			GivenNodes[i] = ""+GivenPs[i].charAt(0);
-			GivenValsByNode[i] = ""+GivenPs[i].substring(2);
+			String[] Given = GivenPs[i].split("=");
+			GivenNodes[i] = Given[0];
+			GivenValsByNode[i] = Given[1];
 		}
-		Factor[] arrayF = new Factor[factorsSeq.length];
-//		for (int i = 0; i < factorsSeq.length; i++) {
-//			arrayF[i] =  new Factor(Ex1.BN.get(factorsSeq[i]).CPT, Ex1.BN.get(factorsSeq[i]).PrentnumSwithValueIndex, Ex1.BN.get(factorsSeq[i]).ParentsNames);
-//		}
+		Factor[] arrayF = new Factor[Ex1.BN.size()];
+		Iterator<Node> it = Ex1.BN.iteretor();
+		int u = 0;
+		while(it.hasNext()) {
+			Node tempNode = it.next();
+			arrayF[u] = tempNode.CTPtoFactor();
+			u++;
+		}
+		for (int i = 0; i < toEliminate.length; i++) {
+//			toEliminate[i]
+		}
 		if(Dbag) {
 			System.out.println("Node target : "+target.name);
 			System.out.println("value Target : "+valTarget);
@@ -54,9 +68,13 @@ public class Algorithms {
 			for (int i = 0; i < GivenValsByNode.length; i++) {
 				System.out.print(GivenValsByNode[i]+" ");
 			}
-			System.out.print("\nfactorsSeq : ");
-			for (int i = 0; i < factorsSeq.length; i++) {
-				System.out.print(factorsSeq[i]+" ");
+			System.out.print("\ntoEliminate : ");
+			for (int i = 0; i < toEliminate.length; i++) {
+				System.out.print(toEliminate[i]+" ");
+			}
+			System.out.print("\nGivenNodes : ");
+			for (int i = 0; i < GivenNodes.length; i++) {
+				System.out.print(GivenNodes[i]+" ");
 			}
 			System.out.println("\n");
 		}
@@ -74,6 +92,15 @@ public class Algorithms {
 		return ans;
 	}
 	
-	
-	
+	public static Factor[] Eliminate( Factor[] allFactors, String nodeNameToEliminate) {
+		boolean[] flags = new boolean[allFactors.length];
+		for (int i = 0; i < allFactors.length; i++) {
+			for (int j = 0; flags[i] && j < allFactors[i].known.length; j++) {
+				if(allFactors[i].known[j] == nodeNameToEliminate)
+					flags[i] = true;
+				
+			}
+		}
+		return null;
+	}
 }
