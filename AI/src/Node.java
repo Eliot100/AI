@@ -119,7 +119,6 @@ public class Node {
 				row++;
 			}
 		}
-		Ex1.printDubArray(probabilities);
 		String pernts =this.name;
 		if(this.numOfParents > 0)
 			pernts += ",";
@@ -133,8 +132,6 @@ public class Node {
 		f.switchByVal = new int[this.PrentSwithVal.length+1];
 		
 		for (int i = 0; i < this.PrentSwithVal.length; i++) {
-//				System.out.println(f.switchByVal);
-//				System.out.println(this.PrentSwithVal[i]);
 				f.switchByVal[i+1] = this.PrentSwithVal[i] ;
 		}
 		

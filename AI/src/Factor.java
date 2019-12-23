@@ -12,25 +12,13 @@ public class Factor {
 		this.matrix = matrix;
 		this.probability = probability;
 		this.dependent = dependent;
-		
-		//this.Parents = Parents;
 	}
 
 	public Factor(Factor f1) 
 	{
 		this.matrix = f1.matrix;
-		//this.Parents = f1.Parents;
 		this.dependent = f1.dependent;
 		this.probability = f1.probability;
-	}
-
-	public Factor JoiningFactors(Factor f1, Factor f2)
-	{
-		Factor joined = new Factor();
-		int counter = count_unique(f1.dependent, f2.dependent);
-		joined.matrix = new String[(int) Math.pow(2.0, (double)(counter))][counter]; // needs improvement.
-
-		return joined;
 	}
 	
 	//Returns the number of unique Strings. 
@@ -109,42 +97,9 @@ public class Factor {
 			else 
 				flag[i] = false;
 		}
-//		for (int i = 0; i < flag.length; i++) {
-//			System.out.println(flag[i]);
-//		}
 		return flag;
 	}
 	
-//	private int getRowToAdd(int arr1Size, int valueInCol, String nodeName, String givenValue) 
-//	{
-//		int index = Factor.get_index_by_value(this.dependent , nodeName);
-//		for (int i = 0; i < arr1Size; i++){
-//			
-//			int j = 0;
-//			for (; j < arr1Size; j++) {
-//				if(givenValue.equals(Ex1.BN.get(this.dependent[index]).VarValues[j])) {
-//					break;
-//				}
-//			}
-//			for (int j2 = j; j2 < this.probability.length-j; j2+=valueInCol) {
-//				for (int k = 0; k < valueInCol; k++) {
-//					
-//					j2++;
-//				}
-//			}
-////			boolean flag;
-////			if (j == 0)
-////				flag = true;
-////			else 
-////				flag = false;
-////			for (int j2 = 0; j2 < arr1.length; j2++) {
-////				for (int k = 0; k < valueInCol; k++) {
-////					
-////				}
-////			}
-//		}
-//		return 0;
-//	}
 	/**
 	 * This function eliminates the second factor from the first one.
 	 * @param f1 - The factor from which a factor is to be eliminated.
@@ -325,10 +280,12 @@ public class Factor {
 	
 	public void printFactor() {
 		Ex1.printArray(this.dependent);
-		Ex1.printIntArray(this.switchByVal);
 		for (int i = 0; i < this.matrix.length; i++) {
-			Ex1.printArray(this.matrix[i]);
+			for (int j = 0; j < this.matrix[0].length; j++) {
+				System.out.print(this.matrix[i][j]+" ");
+			}
+			System.out.println(this.probability[i]);
 		}
-		Ex1.printDubArray(this.probability);
+		System.out.println();
 	}
 }

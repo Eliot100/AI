@@ -155,7 +155,6 @@ public class Ex1 {
 	 */
 	public static void writeOutputFile(BufferedReader br, PrintWriter pw) throws IOException {
 		String st = br.readLine();
-		//System.out.println(Ex1.BN.toString());
 		if(!st.contains("Queries")) {
 			throw new RuntimeException("This isn't the Queries part.");
 		}
@@ -170,13 +169,13 @@ public class Ex1 {
 		}
 	}
 	
-	
 	public static < E > void printArray(E[] inputArray ) {
 		for(E element : inputArray) {
 	         System.out.printf("%s ", element);
 	      }
 	      System.out.println();
 	}
+	
 	public static < E > void printDobArray(E[] inputArray ) {
 		for(E element : inputArray) {
 	         System.out.printf("%s ", element);

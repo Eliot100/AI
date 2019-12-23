@@ -7,7 +7,7 @@ import java.util.Iterator;
  *	 In this class we create Bayesian Network
  */
 public class BayesianNetwork {
-	protected HashMap <String, Node> nodesHash;
+	private HashMap <String, Node> nodesHash;
 	/**
 	 * Initialize the data structure
 	 */
