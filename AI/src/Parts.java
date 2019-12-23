@@ -57,6 +57,7 @@ public class Parts {
 		while (it.hasNext()) {
 			Node tempNode = it.next();
 			BufferedReader brTemp = new BufferedReader(new FileReader( tempNode.cptText));
+			tempNode.buildSwithbyVal();
 			tempNode.getCPT(brTemp);
 			brTemp.close();
 			tempNode.cptText.delete();
@@ -100,8 +101,11 @@ public class Parts {
 		} else 
 			throw new RuntimeException("This isn't the right row. (3):\n"+st);
 		
-		if(tempNode.numOfParents == 1 && ParentsNames[0].equals("none")) {
+		if(tempNode.numOfParents == 1 && ParentsNames[0].equals("none")) 
 			tempNode.numOfParents = 0;
+		for (int i = 0; i < ParentsNames.length && tempNode.numOfParents != 0; i++) {
+//			System.out.println(ParentsNames[i]);
+			Ex1.BN.get(ParentsNames[i]).SonsNames.add(tempNode.name);
 		}
 		tempNode.Parents = new Node[tempNode.numOfParents];
 		for (int i = 0; i < tempNode.numOfParents; i++) {
@@ -126,9 +130,8 @@ public class Parts {
 	}
 	
 	/**
-	 * This function is writeing the output File 
+	 * This function is writing the output File 
 	 * @param br - the BufferedReader of the input file
-	 * @param BN - our Bayesian Network
 	 * @param pw - the PrintWriter of the output file
 	 * @throws IOException
 	 */

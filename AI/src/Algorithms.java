@@ -46,31 +46,7 @@ public class Algorithms {
 			GivenNodes[i] = Given[0];
 			GivenValsByNode[i] = Given[1];
 		}
-		Factor[] arrayF = new Factor[Ex1.BN.size()];
-		Iterator<Node> it = Ex1.BN.iteretor();
-		int cont = 0;
-		while(it.hasNext()) {
-			Node tempNode = it.next();
-			arrayF[cont] = tempNode.CTPtoFactor();
-			cont++;
-		}
-		for (int i = 0; i < toEliminate.length; i++) {
-			boolean[] flags = ifEliminate(arrayF, toEliminate[i]);
-			cont = 0;
-			for (int j = 0; j < flags.length; j++) {
-				if(flags[j] == true)
-					cont++;
-			}
-			Factor[] Factors2Eliminate = new Factor[cont];
-			cont = 0;
-			for (int j = 0; j < arrayF.length; j++) {
-				if(flags[j]) {
-					Factors2Eliminate[cont] = arrayF[j];
-					cont++;
-				}
-				
-			}
-		}
+		
 		if(Dbag) {
 			System.out.println("Node target : "+target.name);
 			System.out.println("value Target : "+valTarget);
@@ -92,8 +68,51 @@ public class Algorithms {
 			}
 			System.out.println("\n");
 		}
+		
+		Factor[] arrayF = new Factor[Ex1.BN.size()];
+		Iterator<Node> it = Ex1.BN.iteretor();
+		int cont = 0;
+		while(it.hasNext()) {
+			Node tempNode = it.next();
+			arrayF[cont] = tempNode.CTPtoFactor();
+			if(Factor.contains(arrayF[cont].dependent,target.name))
+				arrayF[cont].removeGivens(target.name, valTarget);
+			for (int i = 0; i < GivenNodes.length; i++) {
+				if(Factor.contains(arrayF[cont].dependent, GivenNodes[i]))
+					arrayF[cont].removeGivens(GivenNodes[i], GivenValsByNode[i]);
+			}
+			
+
+			for (int i = 0; i < arrayF[cont].switchByVal.length; i++) {
+				System.out.print(arrayF[cont].switchByVal[i]+",");
+			}
+			System.out.println();
+//			arrayF[cont].print();
+			cont++;
+		}
+		
+		
+		
+//		for (int i = 0; i < toEliminate.length; i++) {
+//			boolean[] flags = ifEliminate(arrayF, toEliminate[i]);
+//			cont = 0;
+//			for (int j = 0; j < flags.length; j++) {
+//				if(flags[j] == true)
+//					cont++;
+//			}
+//			Factor[] Factors2Eliminate = new Factor[cont];
+//			cont = 0;
+//			for (int j = 0; j < arrayF.length; j++) {
+//				if(flags[j]) {
+//					Factors2Eliminate[cont] = arrayF[j];
+//					cont++;
+//				}
+//				
+//			}
+//		}
 		return ans;
 	}
+	
 	
 	/**
 	 * We dosn't need to do this algorithm at the moment
@@ -109,8 +128,8 @@ public class Algorithms {
 	private static boolean[] ifEliminate( Factor[] allFactors, String nodeNameToEliminate) {
 		boolean[] flags = new boolean[allFactors.length];
 		for (int i = 0; i < allFactors.length; i++) {
-			for (int j = 0; flags[i] && j < allFactors[i].known.length; j++) {
-				if(allFactors[i].known[j] == nodeNameToEliminate)
+			for (int j = 0; flags[i] && j < allFactors[i].dependent.length; j++) {
+				if(allFactors[i].dependent[j] == nodeNameToEliminate)
 					flags[i] = true;
 			}
 		}
