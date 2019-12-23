@@ -19,12 +19,12 @@ public class BayesianNetwork {
 	 * @return String like: {A,D,E,V,H} 
 	 * When The vertices A,D,E,V,H in the network
 	 */
-	public String toSrting() {
+	public String toString() {
 		String st = "{ ";
 		Iterator<Node> itr = this.iteretor(); 
 		while (itr.hasNext()) {
 			Node mapNode = itr.next(); 
-			st +=mapNode.toSrting()+", ";
+			st +=mapNode.toString()+", ";
 		}
 		st = st.substring(0, st.length()-2)+" }";
 		return st;

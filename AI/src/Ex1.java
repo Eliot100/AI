@@ -38,7 +38,7 @@ public class Ex1 {
 		}
 	}
 	
-	
+	// 
 	public static void bagining(BufferedReader br) throws IOException {
 		String st;
 		st = br.readLine();
@@ -155,6 +155,7 @@ public class Ex1 {
 	 */
 	public static void writeOutputFile(BufferedReader br, PrintWriter pw) throws IOException {
 		String st = br.readLine();
+		//System.out.println(Ex1.BN.toString());
 		if(!st.contains("Queries")) {
 			throw new RuntimeException("This isn't the Queries part.");
 		}
@@ -170,11 +171,31 @@ public class Ex1 {
 	}
 	
 	
+	public static < E > void printArray(E[] inputArray ) {
+		for(E element : inputArray) {
+	         System.out.printf("%s ", element);
+	      }
+	      System.out.println();
+	}
+	public static < E > void printDobArray(E[] inputArray ) {
+		for(E element : inputArray) {
+	         System.out.printf("%s ", element);
+	      }
+	      System.out.println();
+	}
+
+
+	public static void printDubArray(double[] probability) {
+		for(double element : probability) {
+	         System.out.printf("%s ", element);
+	      }
+	      System.out.println();
+	}
 	
-	
-	
-	
-	
-	
-	
+	public static void printIntArray(int[] probability) {
+		for(int element : probability) {
+	         System.out.printf("%s ", element);
+	      }
+	      System.out.println();
+	}
 }

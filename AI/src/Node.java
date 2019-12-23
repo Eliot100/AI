@@ -30,7 +30,7 @@ public class Node {
 	/**
 	 * @return String - the node name 
 	 */
-	public String toSrting() {
+	public String toString() {
 		return this.name;
 	}
 
@@ -111,12 +111,15 @@ public class Node {
 
 	public Factor CTPtoFactor() {
 		Factor f = new Factor();
-		
 		double[] probabilities = new double[this.CPT[0].length*this.CPT.length];
-		for (int i = 0; i < this.CPT[0].length; i++) 
-			for (int j = 0; j < this.CPT.length; j++) 
-				probabilities[j*this.VarValues.length+i] = this.CPT[j][i];
-		
+		int row = 0;
+		for (int i = 0; i < this.CPT[0].length; i++) {
+			for (int j = 0; j < this.CPT.length; j++) {
+				probabilities[row] = this.CPT[j][i];
+				row++;
+			}
+		}
+		Ex1.printDubArray(probabilities);
 		String pernts =this.name;
 		if(this.numOfParents > 0)
 			pernts += ",";
@@ -127,20 +130,23 @@ public class Node {
 				pernts += this.ParentsNames[i]+",";
 		}
 		f.dependent = pernts.split(",");
+		f.switchByVal = new int[this.PrentSwithVal.length+1];
 		
 		for (int i = 0; i < this.PrentSwithVal.length; i++) {
+//				System.out.println(f.switchByVal);
+//				System.out.println(this.PrentSwithVal[i]);
 				f.switchByVal[i+1] = this.PrentSwithVal[i] ;
 		}
-		f.switchByVal = new int[this.PrentSwithVal.length+1];
+		
 		if(f.switchByVal.length > 1)
 			f.switchByVal[0] = f.switchByVal[1]*this.VarValues.length;
 		else 
 			f.switchByVal[0] = 1;
-//		f.probability = probabilities;
-//		if(this.numOfParents == 0)
-//			f.proba = "P("+this.name+")";
-//		else 
-//			f.proba = "P("+this.name+"|"+pernts+")";
+		f.probability = probabilities;
+		if(this.numOfParents == 0)
+			f.proba = "P("+this.name+")";
+		else 
+			f.proba = "P("+this.name+"|"+pernts+")";
 		return f;
 
 	}

@@ -4,8 +4,7 @@ public class Factor {
 	double[] probability = null; // The probability (0-1)
 	String[] dependent = null; // The Strings the factor gets 
 	int[] switchByVal = null; // switchByVal[i] is the number when dependent[i] is Repeated itself
-	String proba = null;
-	//Factor[] Parents = null; // The factor's parent factors
+	String proba = null; 
 	public Factor() {;}
 	
 	public Factor(String[][] matrix, double[] probability, String[] dependent)
@@ -33,10 +32,11 @@ public class Factor {
 
 		return joined;
 	}
-
-	public int count_unique(String[] c1, String[] c2) 
+	
+	//Returns the number of unique Strings. 
+	public static int count_unique(String[] c1, String[] c2) 
 	{
-		int counter = c1.length-1;
+		int counter = c1.length;
 		for (int i = 0; i < c2.length; i++)
 		{
 			if(!contains(c1, c2[i]))
@@ -55,47 +55,96 @@ public class Factor {
 		return false;
 	}
 	
-	public static boolean contains(String[] c1, String car) 
+	public static boolean contains(String[] c1, String nodeName) 
 	{
 		for (int i = 0; i < c1.length; i++)
 		{
-			if(c1[i].equals(car))
+			if(c1[i].equals(nodeName))
 				return true;
 		}
 		return false;
 	} 
 	
+	// Removes the rows who are not needed. 
 	public void removeGivens(String nodeName, String givenValue) 
 	{
 		int index = Factor.get_index_by_value(this.dependent , nodeName);
-//		System.out.println(index);
 		if(index >= 0) {
 			int valueInCol = this.switchByVal[index];
-			for (int i = 0; i < this.switchByVal.length; i++) {
-//				System.out.println(this.switchByVal[i]);
-			}
-			for (int i = 0; i < index; i++)
-			{
+			for (int i = 0; i < index; i++){
 				this.switchByVal[i] /= this.switchByVal[index];
 			}
-			
 			double[] arr1 = new double[this.probability.length/this.switchByVal[index]];
-			for (int i = 0; i < arr1.length; i++)
-			{
+			boolean[] flag = WhatRowInArr1(nodeName, givenValue,index,arr1.length, valueInCol);
+
+			int j = 0;
+			for (int i = 0; i < flag.length; i++) {
 				
-				int j2 = 0;
-				for (; j2 < arr1.length; j2++) {
-					if(givenValue.equals(Ex1.BN.get(this.dependent[index]).VarValues[j2])) {
-						break;
-					}
+				if(flag[i]) {
+					arr1[j] = this.probability[i];
+					j++;
 				}
-				arr1[i]= this.probability[i*valueInCol+j2];
 			}
+			
 			this.probability = arr1;
 			this.switchByVal[index] = 0; 
 		}
 	}
 	
+	// Returns an array of boolean values (true for in) 
+	private boolean[] WhatRowInArr1(String nodeName, String givenValue, int index, int arr1Size, int valueInCol) {
+		boolean[] flag = new boolean[this.probability.length];
+		int j = 0;
+		for (; j < arr1Size; j++) {
+			if(givenValue.equals(Ex1.BN.get(this.dependent[index]).VarValues[j])) {
+				break;
+			}
+		}
+		// Makes the boolean array.
+		for (int i = 0; i < this.probability.length; i++) {
+			int nodeVarValSize = Ex1.BN.get(nodeName).VarValues.length;
+			int cicle = valueInCol*nodeVarValSize;
+			if(i%cicle >= (j*valueInCol)%cicle && i%cicle < ((j+1)*valueInCol)%cicle)
+				flag[i] = true;
+			else 
+				flag[i] = false;
+		}
+//		for (int i = 0; i < flag.length; i++) {
+//			System.out.println(flag[i]);
+//		}
+		return flag;
+	}
+	
+//	private int getRowToAdd(int arr1Size, int valueInCol, String nodeName, String givenValue) 
+//	{
+//		int index = Factor.get_index_by_value(this.dependent , nodeName);
+//		for (int i = 0; i < arr1Size; i++){
+//			
+//			int j = 0;
+//			for (; j < arr1Size; j++) {
+//				if(givenValue.equals(Ex1.BN.get(this.dependent[index]).VarValues[j])) {
+//					break;
+//				}
+//			}
+//			for (int j2 = j; j2 < this.probability.length-j; j2+=valueInCol) {
+//				for (int k = 0; k < valueInCol; k++) {
+//					
+//					j2++;
+//				}
+//			}
+////			boolean flag;
+////			if (j == 0)
+////				flag = true;
+////			else 
+////				flag = false;
+////			for (int j2 = 0; j2 < arr1.length; j2++) {
+////				for (int k = 0; k < valueInCol; k++) {
+////					
+////				}
+////			}
+//		}
+//		return 0;
+//	}
 	/**
 	 * This function eliminates the second factor from the first one.
 	 * @param f1 - The factor from which a factor is to be eliminated.
@@ -104,7 +153,6 @@ public class Factor {
 	 */
 	public Factor Eliminaton(Factor f1 , Factor toeliminate)
 	{
-		// call joiningFactors
 		Factor f2 = new Factor();
 		f2.matrix = new String[f1.matrix.length-1][f1.matrix[0].length-1];
 		String[] arr = new String[f1.matrix.length-1];
@@ -119,7 +167,15 @@ public class Factor {
 		f2.dependent = makedependent(f1, toeliminate);
 		return f2;
 	}
+	
+	public Factor Eliminaton(Factor f1 , String toEliminate){
+		Factor f2 = new Factor();
+		f2.matrix = new String[f1.matrix.length/Ex1.BN.get(toEliminate).VarValues.length][f1.matrix[0].length-1];
+		
+		return f1;
+	}
 
+	//Makes the dependent array from two factors
 	public String[] makedependent(Factor f1, Factor toeliminate) 
 	{
 		String[] arr = new String[f1.dependent.length-toeliminate.dependent.length];
@@ -225,9 +281,6 @@ public class Factor {
 	{
 		for (int i = 0; i < arr.length; i++)
 		{
-//			System.out.println("i: = "+arr[i]);
-//			System.out.println("s: = "+ s);
-//			System.out.println();
 			if(arr[i].equals(s))
 				return i;
 		}
@@ -253,5 +306,29 @@ public class Factor {
 				System.out.print(this.probability[i]+","+"\n");
 		}
 		
+	}
+	
+
+	public void makeMatrix(int numOfRows ) {
+		String[][] matrix = new String[numOfRows][this.dependent.length];
+		
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix[0].length; j++) {
+				int nodeVarValSize = Ex1.BN.get(this.dependent[j]).VarValues.length;
+				int cicle = this.switchByVal[j]*nodeVarValSize;
+				matrix[i][j] = Ex1.BN.get(this.dependent[j]).VarValues[(i%cicle)/this.switchByVal[j]];
+			}
+		}
+		this.matrix = matrix;
+	}
+	
+	
+	public void printFactor() {
+		Ex1.printArray(this.dependent);
+		Ex1.printIntArray(this.switchByVal);
+		for (int i = 0; i < this.matrix.length; i++) {
+			Ex1.printArray(this.matrix[i]);
+		}
+		Ex1.printDubArray(this.probability);
 	}
 }

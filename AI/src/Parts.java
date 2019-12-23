@@ -31,7 +31,7 @@ public class Parts {
 					Node n1 = new Node(verticesNames[i]);
 					Ex1.BN.put(verticesNames[i], n1);
 				}
-				if(Dbag){System.out.println(Ex1.BN.toSrting());}
+				if(Dbag){System.out.println(Ex1.BN.toString());}
 			} catch (RuntimeException e) {
 				throw new RuntimeException("The string: "+ st +" isn't represent Bayesian Network vertices.");
 			}
