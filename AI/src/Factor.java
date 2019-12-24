@@ -14,6 +14,15 @@ public class Factor {
 		this.probability = probability;
 		this.dependent = dependent;
 	}
+	
+	public void normalize() 
+	{
+		double sum = Algorithms.sumArr(this.probability);
+		for (int i = 0; i < this.probability.length; i++) {
+			this.probability[i] = this.probability[i]/sum;
+		}
+		
+	}
 
 	public Factor(Factor f1) 
 	{
@@ -136,7 +145,7 @@ public class Factor {
 	private void dependentElimination(Factor f1, String toEliminate) {
 		this.dependent = new String[f1.dependent.length-1];
 		int conter = 0;
-		for (int i = 0; i < dependent.length; i++) {
+		for (int i = 0; i < f1.dependent.length; i++) {
 			if(!f1.dependent[i].equals(toEliminate))
 				this.dependent[i-conter] = f1.dependent[i];
 			else 

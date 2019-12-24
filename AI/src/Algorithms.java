@@ -20,6 +20,8 @@ public class Algorithms {
 	 * 0.84902,7,12
 	 */
 	public static String VariableElimination( String st) {
+		Algorithms.numOfPlus = 0;
+		Algorithms.numOfMul = 0;
 		// Making variables for later use (From the input file queries) 
 		query q = query.init(st);
 		Factor[] arrayF = arrayF_Init(q);
@@ -27,11 +29,21 @@ public class Algorithms {
 		for (int i = 0; i < q.toEliminate.length; i++) {
 			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
 		}
-		
+		double prob =1;
+		for (int i = 0; i < q.toEliminate.length; i++) {
+			prob *= arrayF[0].probability[0];
+			
+		}
+		for (int i = 0; i < arrayF.length; i++) {
+			arrayF[i].printFactor();
+		}
+//		System.out.println(Algorithms.numOfPlus+","+Algorithms.numOfMul);
+//		System.out.println(arrayF.length+" "+arrayF[0].probability.length );
 //		Factor f = join(arrayF[4],arrayF[3]);
 		if (arrayF.length != 1 || arrayF[0].probability.length != 1)
 			return null;
-		return (arrayF[0].probability[0]+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
+		System.out.println(prob+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
+		return (prob+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 	}
 	
 	private static Factor[] arrayF_Init(query q) {
@@ -41,12 +53,12 @@ public class Algorithms {
 		while(it.hasNext()) {
 			Node tempNode = it.next();
 			arrayF[cont] = tempNode.CTPtoFactor();
-			if(Factor.contains(arrayF[cont].dependent,q.target.name))
-				arrayF[cont].removeGivens(q.target.name, q.valTarget);
-			for (int i = 0; i < q.GivenNodes.length; i++) {
-				if(Factor.contains(arrayF[cont].dependent, q.GivenNodes[i]))
-					arrayF[cont].removeGivens(q.GivenNodes[i], q.GivenValsByNode[i]);
-			}
+//			if(Factor.contains(arrayF[cont].dependent,q.target.name))
+//				arrayF[cont].removeGivens(q.target.name, q.valTarget);
+//			for (int i = 0; i < q.GivenNodes.length; i++) {
+//				if(Factor.contains(arrayF[cont].dependent, q.GivenNodes[i]))
+//					arrayF[cont].removeGivens(q.GivenNodes[i], q.GivenValsByNode[i]);
+//			}
 			removeUnwantedDependecies(arrayF[cont]);
 			arrayF[cont].makeMatrix(findNumOfRows(arrayF[cont]));
 			cont++;
@@ -54,7 +66,7 @@ public class Algorithms {
 		return arrayF;
 	}
 
-	public static class query {
+	private static class query {
 		public Node target;
 		public String valTarget;
 		public String[] toEliminate;
@@ -98,6 +110,9 @@ public class Algorithms {
 	
 	private static Factor[] JoinAndEliminate(String toEliminate, Factor[] arrayF) {
 		boolean[] flags = ifEliminate(arrayF, toEliminate);
+//		for (int i = 0; i < flags.length; i++) {
+//			System.out.println(flags[i]);
+//		}
 		int cont = 0;
 		for (int j = 0; j < flags.length; j++) { 
 			if(flags[j])
@@ -118,17 +133,25 @@ public class Algorithms {
 			}
 		}
 		FactorsNot2Eliminate[cont2] = joinAll(Factors2Eliminate, toEliminate);
-
 		return FactorsNot2Eliminate;
+	}
+	
+	public static double sumArr(double[] arr) 
+	{
+		double sum = 0; 
+		for (int i = 0; i < arr.length; i++)
+		{
+			sum+=arr[i];
+		}
+		return sum;
 	}
 	
 	public static Factor joinAll(Factor[] farr, String toEliminate){
 		Factor f1 = null;
 		if(farr.length > 0 )
 			f1 = farr[0];
-		System.out.println(f1);
 		for (int i = 1; i < farr.length; i++) {
-			f1.printFactor();
+//			f1.printFactor();
 			f1 = join(f1, farr[i]);
 		}
 		return f1.Elimination(f1, toEliminate);
@@ -148,20 +171,20 @@ public class Algorithms {
 	
 	public static int findNumOfRows(Factor newfactor) {
 		for (int i = 0; i < newfactor.switchByVal.length; i++) {
-			if(newfactor.switchByVal[i] != 0 )
+			if(newfactor.switchByVal[i] != 0 ) {
 				return newfactor.switchByVal[i]*Ex1.BN.get(newfactor.dependent[i]).VarValues.length;
+			}
 			else
 				continue;
 		}
 		return 1;
 	}
-	
 
 	private static double[] makeProbability(Factor f1, Factor f2, int ProbabilitySize, Factor newfactor) {
 		double[] probability = new double[ProbabilitySize];
 		for (int i = 0; i < probability.length; i++) {
-//			f1.printFactor();
 			probability[i] = ProbByRow(i, f1, newfactor)*ProbByRow(i, f2, newfactor);
+			Algorithms.numOfMul ++;
 		}
 		return probability;
 	}
@@ -248,14 +271,15 @@ public class Algorithms {
 	private static String[] get_unique(String[] s1, String[] s2, int size) {
 		String[] newS = new String[size];
 		int counter = 0;
-		for (int i = 0; i < s1.length; i++) {
-			newS[i] = s1[i];
-			counter = i+1;
-		}
+		for ( ; counter < s1.length; counter++) 
+			newS[counter] = s1[counter];
+		
 		for (int i = 0; i < s2.length; i++) {
 			if(!Factor.contains(s1,s2[i])) {
 				newS[counter+i] = s2[i];
 			}
+			else 
+				counter--;
 		}
 		return newS;
 	}
@@ -275,9 +299,11 @@ public class Algorithms {
 		private static boolean[] ifEliminate( Factor[] allFactors, String nodeNameToEliminate) {
 			boolean[] flags = new boolean[allFactors.length];
 			for (int i = 0; i < allFactors.length; i++) {
-				for (int j = 0; flags[i] && j < allFactors[i].dependent.length; j++)
-					if(allFactors[i].dependent[j] == nodeNameToEliminate)
+				for (int j = 0; !flags[i] && j < allFactors[i].dependent.length; j++) {
+//					System.out.println(allFactors[i].dependent[j]+" =? "+nodeNameToEliminate);
+					if(allFactors[i].dependent[j].equals(nodeNameToEliminate))
 						flags[i] = true;
+				}
 			}
 			return flags;
 		}
