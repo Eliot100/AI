@@ -154,6 +154,8 @@ public class Ex1 {
 	 * @throws IOException
 	 */
 	public static void writeOutputFile(BufferedReader br, PrintWriter pw) throws IOException {
+		Algorithms.numOfPlus = new Integer(0);
+		Algorithms.numOfMul = new Integer(0);
 		String st = br.readLine();
 		if(!st.contains("Queries")) {
 			throw new RuntimeException("This isn't the Queries part.");

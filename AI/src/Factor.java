@@ -5,6 +5,7 @@ public class Factor {
 	String[] dependent = null; // The Strings the factor gets 
 	int[] switchByVal = null; // switchByVal[i] is the number when dependent[i] is Repeated itself
 	String proba = null; 
+	
 	public Factor() {;}
 	
 	public Factor(String[][] matrix, double[] probability, String[] dependent)
@@ -106,32 +107,90 @@ public class Factor {
 	 * @param toeliminate - The factor to eliminate (assuming the know array is of length 1).
 	 * @return Returns the first factor when the second factor is eliminated from it. 
 	 */
-	public Factor Eliminaton(Factor f1 , Factor toeliminate)
-	{
+//	public Factor Eliminaton(Factor f1 , Factor toeliminate)
+//	{
+//		Factor f2 = new Factor();
+//		f2.matrix = new String[f1.matrix.length-1][f1.matrix[0].length-1];
+//		String[] arr = new String[f1.matrix.length-1];
+//		int[] removebycol = new int[f1.matrix[0].length]; 
+//		for (int i = 0; i < f1.matrix.length; i++) 
+//		{
+//			arr = make_arr(f1,i,toeliminate);
+//			removebycol = makeremovebycol(f1, i, toeliminate);
+//			f2.matrix[i] = arr;
+//			f2.probability[i] = get_value_to_merge(arr, f1, removebycol);
+//		}
+//		f2.dependent = makeDependent(f1, toeliminate);
+//		return f2;
+//	}
+	
+	public Factor Elimination(Factor f1 , String toEliminate){
 		Factor f2 = new Factor();
-		f2.matrix = new String[f1.matrix.length-1][f1.matrix[0].length-1];
-		String[] arr = new String[f1.matrix.length-1];
-		int[] removebycol = new int[f1.matrix[0].length]; 
-		for (int i = 0; i < f1.matrix.length; i++) 
-		{
-			arr = make_arr(f1,i,toeliminate);
-			removebycol = makeremovebycol(f1, i, toeliminate);
-			f2.matrix[i] = arr;
-			f2.probability[i] = get_value_to_merge(arr, f1, removebycol);
-		}
-		f2.dependent = makedependent(f1, toeliminate);
+		f2.dependentElimination(f1 , toEliminate);
+		f2.switchByValElimination(f1 , toEliminate);
+		f2.makeMatrix(Algorithms.findNumOfRows(f2));
+		f2.probabilityElimination(f1 , toEliminate);
 		return f2;
 	}
 	
-	public Factor Eliminaton(Factor f1 , String toEliminate){
-		Factor f2 = new Factor();
-		f2.matrix = new String[f1.matrix.length/Ex1.BN.get(toEliminate).VarValues.length][f1.matrix[0].length-1];
-		
-		return f1;
+	private void dependentElimination(Factor f1, String toEliminate) {
+		this.dependent = new String[f1.dependent.length-1];
+		int conter = 0;
+		for (int i = 0; i < dependent.length; i++) {
+			if(!f1.dependent[i].equals(toEliminate))
+				this.dependent[i-conter] = f1.dependent[i];
+			else 
+				conter++;
+		}
 	}
 
+	private void switchByValElimination(Factor f1 , String toEliminate) {
+		this.switchByVal = new int[f1.switchByVal.length-1];
+		boolean flag = true;
+		int i = 0;
+		while ( flag && i < f1.dependent.length ) {
+			if(f1.dependent[i].equals(toEliminate) )
+				flag = false;
+			else
+				i++;
+		}
+		for (int j = 0; j < f1.dependent.length; j++) {
+			if(j < i)
+				this.switchByVal[j] = f1.switchByVal[j]/Ex1.BN.get(toEliminate).VarValues.length;
+			else if (j > i)
+				this.switchByVal[j-1] = f1.switchByVal[j];
+		}
+	}
+	
+	private void probabilityElimination(Factor f1, String toEliminate) {
+		this.probability = new double[this.matrix.length];
+		int f1toEliminateIndex = get_index_by_value(f1.dependent, toEliminate);
+		boolean flag ;
+		for (int i = 0; i < this.probability.length; i++) {
+			for (int j = 0; j < f1.probability.length; j++) {
+				flag = true;
+				for (int j2 = 0; flag && j2 < f1.dependent.length; j2++) {
+					if(j2 == f1toEliminateIndex)
+						continue;
+					if(j2 < f1toEliminateIndex ) {
+						if(!f1.matrix[j][j2].equals(this.matrix[i][j2]))
+							flag = false;
+					}
+					else if (j2 > f1toEliminateIndex) {
+						if(!f1.matrix[j][j2].equals(this.matrix[i][j2-1]))
+							flag = false;
+					}
+				}
+				if(flag) {
+					this.probability[i] += f1.probability[j];
+					Algorithms.numOfPlus++;
+				}
+			}	
+		}
+	}
+	
 	//Makes the dependent array from two factors
-	public String[] makedependent(Factor f1, Factor toeliminate) 
+	public String[] makeDependent(Factor f1, Factor toeliminate) 
 	{
 		String[] arr = new String[f1.dependent.length-toeliminate.dependent.length];
 		int counter = 0;

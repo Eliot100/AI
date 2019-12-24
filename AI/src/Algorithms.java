@@ -6,6 +6,10 @@ import java.util.Iterator;
  * in this class we write the Variable Elimination algorithm
  */
 public class Algorithms {
+
+	public static int numOfMul;
+	public static int numOfPlus;
+	
 	/**
 	 * @param st - the String query
 	 * @return String that contain the query answer, comma
@@ -68,10 +72,17 @@ public class Algorithms {
 			arrayF[cont].makeMatrix(findNumOfRows(arrayF[cont]));
 			cont++;
 		}
-//		for (int i = 0; i < toEliminate.length; i++) {
-//			arrayF = JoinAndEliminate( toEliminate[i], arrayF);
+//		for (int j = 0; j < arrayF.length; j++) {
+//			arrayF[j].printFactor();
 //		}
-
+		for (int i = 0; i < toEliminate.length; i++) {
+			
+			arrayF = JoinAndEliminate( toEliminate[i], arrayF);
+			
+		}
+//		for (int j = 0; j < arrayF.length; j++) {
+//			arrayF[j].printFactor();
+//		}
 //		Factor f = join(arrayF[4],arrayF[3]);
 		return ans;
 	}
@@ -99,7 +110,7 @@ public class Algorithms {
 			}
 		}
 		FactorsNot2Eliminate[cont] = joinAll(Factors2Eliminate, toEliminate);
-		FactorsNot2Eliminate[cont].printFactor();
+
 		return FactorsNot2Eliminate;
 	}
 	
@@ -108,9 +119,10 @@ public class Algorithms {
 		if(farr.length > 0 )
 			f1 = farr[0];
 		for (int i = 1; i < farr.length; i++) {
+			f1.printFactor();
 			f1 = join(f1, farr[i]);
 		}
-		return f1.Eliminaton(f1, toEliminate);
+		return f1.Elimination(f1, toEliminate);
 	}
 
 	private static Factor join(Factor f1, Factor f2) {
@@ -127,7 +139,7 @@ public class Algorithms {
 		return newfactor;
 	}
 	
-	private static int findNumOfRows(Factor newfactor) {
+	public static int findNumOfRows(Factor newfactor) {
 		for (int i = 0; i < newfactor.switchByVal.length; i++) {
 			if(newfactor.switchByVal[i] != 0 )
 				return newfactor.switchByVal[i]*Ex1.BN.get(newfactor.dependent[i]).VarValues.length;
@@ -149,7 +161,10 @@ public class Algorithms {
 	
 	private static double ProbByRow(int rowProb, Factor f, Factor newfactor )
 	{
-		int rowOldFactor = 0, colOldFactor = 0, colNewFactor = 0, counter = 0;
+		if(f.probability.length == 1 && f.dependent.length == 0) {
+			return f.probability[0];
+		}
+		int rowOldFactor = 0, colOldFactor = 0, counter = 0;//, colNewFactor = 0
 		for (; rowOldFactor < f.probability.length; rowOldFactor++) {
 			for (; colOldFactor < f.dependent.length; colOldFactor++) {
 				if(newfactor.matrix[rowProb][Factor.get_index_by_value(newfactor.dependent,f.dependent[colOldFactor])]!=f.matrix[rowOldFactor][colOldFactor])
