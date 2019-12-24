@@ -74,6 +74,7 @@ public class Ex1 {
 			tempNode.getCPT(brTemp);
 			brTemp.close();
 			tempNode.cptText.delete();
+			tempNode.cptFactor = tempNode.CTPtoFactor();
 		}
 	}
 	

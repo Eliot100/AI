@@ -21,7 +21,6 @@ public class Factor {
 		for (int i = 0; i < this.probability.length; i++) {
 			this.probability[i] = this.probability[i]/sum;
 		}
-		
 	}
 
 	public Factor(Factor f1) 
@@ -133,12 +132,12 @@ public class Factor {
 //		return f2;
 //	}
 	
-	public Factor Elimination(Factor f1 , String toEliminate){
+	public Factor Elimination( String toEliminate){
 		Factor f2 = new Factor();
-		f2.dependentElimination(f1 , toEliminate);
-		f2.switchByValElimination(f1 , toEliminate);
+		f2.dependentElimination(this , toEliminate);
+		f2.switchByValElimination(this , toEliminate);
 		f2.makeMatrix(Algorithms.findNumOfRows(f2));
-		f2.probabilityElimination(f1 , toEliminate);
+		f2.probabilityElimination(this , toEliminate);
 		return f2;
 	}
 	

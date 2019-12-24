@@ -17,7 +17,7 @@ public class Node {
 	int numOfParents;  
 	File cptText;
 	int[] PrentSwithVal;
-
+	Factor cptFactor;
 	/**
 	 * This function initialize Node by: name
 	 */
@@ -144,8 +144,9 @@ public class Node {
 			f.proba = "P("+this.name+")";
 		else 
 			f.proba = "P("+this.name+"|"+pernts+")";
+		
+		f.makeMatrix(f.probability.length);
 		return f;
-
 	}
 
 	public void buildSwithbyVal() {
