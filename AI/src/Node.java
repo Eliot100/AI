@@ -3,14 +3,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 /**
- * @author Eli Ruvinov
+ * @author Eli Ruvinov and Dvir Sadon
  * In this class we create the Node that we using in the Bayesian Network
  */
 public class Node {
-
 	String[] ParentsNames; 
-	ArrayList<String> SonsNames;
-	Node[] Parents;     
+	ArrayList<String> SonsNames;  
 	String[] VarValues;    
 	String name;   
 	double[][] CPT;  
@@ -43,7 +41,7 @@ public class Node {
 			boolean Dbag= false; // true || false
 			int x = 1;
 			for (int i = 0; i < this.numOfParents; i++) {
-				x *= this.Parents[i].VarValues.length;
+				x *= Ex1.BN.get(this.ParentsNames[i]).VarValues.length;
 			}
 			this.CPT = new double[x][this.VarValues.length];
 			String st = br.readLine();
@@ -72,7 +70,7 @@ public class Node {
 
 		int RowNum = 0;
 		for (int i = 0; i < this.numOfParents; i++) {
-			for (int j = 0; j < this.Parents[i].VarValues.length; j++) 
+			for (int j = 0; j < Ex1.BN.get(this.ParentsNames[i]).VarValues.length; j++) 
 				if(tempWordArray[i].equals(Ex1.BN.get(this.ParentsNames[i]).VarValues[j]))
 					RowNum += j*this.PrentSwithVal[i];
 		}
@@ -81,6 +79,11 @@ public class Node {
 		this.CPT[RowNum][this.VarValues.length-1] = lastValProb;
 	}
 
+	/**
+	 * @param tempWordArray - Array of values between ','.
+	 * @param RowNum - Index to check in tempWordArray.
+	 * @return A double value that represents the lastProbability needed.
+	 */
 	private double lastProbability(String[] tempWordArray, int RowNum) {
 		double sum = 0;
 		for (int i = 0; i < this.VarValues.length-1; i++) {
@@ -97,6 +100,10 @@ public class Node {
 		return lastValProb;
 	}
 
+	/**
+	 * Makes a Factor from the CTP. 
+	 * @return A Factor that represents the CTP.
+	 */
 	public static void printCPT( String nodeName) {
 		for (int i = 0; i < Ex1.BN.get(nodeName).CPT.length; i++) {
 			System.out.print("[");
@@ -140,11 +147,6 @@ public class Node {
 		else 
 			f.switchByVal[0] = 1;
 		f.probability = probabilities;
-		if(this.numOfParents == 0)
-			f.proba = "P("+this.name+")";
-		else 
-			f.proba = "P("+this.name+"|"+pernts+")";
-		
 		f.makeMatrix(f.probability.length);
 		return f;
 	}
@@ -154,7 +156,7 @@ public class Node {
 		int[] PrentnumSwithValueIndex = new int[this.numOfParents];
 		for (int i = this.numOfParents-1; i >= 0; i--) {
 			PrentnumSwithValueIndex[i] = SwithValueIndex;
-			SwithValueIndex *= this.Parents[i].VarValues.length;
+			SwithValueIndex *= Ex1.BN.get(this.ParentsNames[i]).VarValues.length;
 		}
 		this.PrentSwithVal = PrentnumSwithValueIndex;
 

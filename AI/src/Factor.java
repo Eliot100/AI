@@ -4,17 +4,12 @@ public class Factor {
 	double[] probability = null; // The probability (0-1)
 	String[] dependent = null; // The Strings the factor gets 
 	int[] switchByVal = null; // switchByVal[i] is the number when dependent[i] is Repeated itself
-	String proba = null; 
 	
 	public Factor() {;}
 	
-	public Factor(String[][] matrix, double[] probability, String[] dependent)
-	{
-		this.matrix = matrix;
-		this.probability = probability;
-		this.dependent = dependent;
-	}
-	
+	/**
+	 * Normalizes this Factor probability array (sum/probability)
+	 */
 	public void normalize() 
 	{
 		double sum = Algorithms.sumArr(this.probability);
@@ -22,15 +17,13 @@ public class Factor {
 			this.probability[i] = this.probability[i]/sum;
 		}
 	}
-
-	public Factor(Factor f1) 
-	{
-		this.matrix = f1.matrix;
-		this.dependent = f1.dependent;
-		this.probability = f1.probability;
-	}
 	
-	//Returns the number of unique Strings. 
+	/**
+	 * 
+	 * @param c1 - The first array to check.
+	 * @param c2 - The Second array to check
+	 * @return The number of unique Strings. 
+	 */ 
 	public static int count_unique(String[] c1, String[] c2) 
 	{
 		int counter = c1.length;
@@ -40,16 +33,6 @@ public class Factor {
 				counter++;
 		}
 		return counter;
-	}
-
-	public  boolean contains(char[] c1, char car) 
-	{
-		for (int i = 0; i < c1.length; i++)
-		{
-			if(c1[i] == car)
-				return true;
-		}
-		return false;
 	}
 	
 	public static boolean contains(String[] c1, String nodeName) 
@@ -62,7 +45,11 @@ public class Factor {
 		return false;
 	} 
 	
-	// Removes the rows who are not needed. 
+	/**
+	 * Removes the redundant rows.
+	 * @param nodeName - The name of the Node.
+	 * @param givenValue - The value that should stay.
+	 */
 	public void removeGivens(String nodeName, String givenValue) 
 	{
 		int index = Factor.get_index_by_value(this.dependent , nodeName);
@@ -82,13 +69,20 @@ public class Factor {
 					j++;
 				}
 			}
-			
 			this.probability = arr1;
 			this.switchByVal[index] = 0; 
 		}
 	}
 	
-	// Returns an array of boolean values (true for in) 
+	/**
+	 * Makes an array of boolean values that are represent in or out of the future array(true: in , false:out)
+	 * @param nodeName - The name of the Node.
+	 * @param givenValue - The value needed to keep in the array.
+	 * @param index - The index of nodeName in the dependents array. 
+	 * @param arr1Size - The size of arr1.
+	 * @param valueInCol - this.switchByVal[index].
+	 * @return an array of boolean values (true for in).
+	 */ 
 	private boolean[] WhatRowInArr1(String nodeName, String givenValue, int index, int arr1Size, int valueInCol) {
 		boolean[] flag = new boolean[this.probability.length];
 		int j = 0;
@@ -108,30 +102,11 @@ public class Factor {
 		}
 		return flag;
 	}
-	
 	/**
-	 * This function eliminates the second factor from the first one.
-	 * @param f1 - The factor from which a factor is to be eliminated.
-	 * @param toeliminate - The factor to eliminate (assuming the know array is of length 1).
-	 * @return Returns the first factor when the second factor is eliminated from it. 
+	 * 
+	 * @param toEliminate - The column (variable that we want to eliminate). 
+	 * @return A Factor that is toEliminate eliminated from f1.
 	 */
-//	public Factor Eliminaton(Factor f1 , Factor toeliminate)
-//	{
-//		Factor f2 = new Factor();
-//		f2.matrix = new String[f1.matrix.length-1][f1.matrix[0].length-1];
-//		String[] arr = new String[f1.matrix.length-1];
-//		int[] removebycol = new int[f1.matrix[0].length]; 
-//		for (int i = 0; i < f1.matrix.length; i++) 
-//		{
-//			arr = make_arr(f1,i,toeliminate);
-//			removebycol = makeremovebycol(f1, i, toeliminate);
-//			f2.matrix[i] = arr;
-//			f2.probability[i] = get_value_to_merge(arr, f1, removebycol);
-//		}
-//		f2.dependent = makeDependent(f1, toeliminate);
-//		return f2;
-//	}
-	
 	public Factor Elimination( String toEliminate){
 		Factor f2 = new Factor();
 		f2.dependentElimination(this , toEliminate);
@@ -141,6 +116,11 @@ public class Factor {
 		return f2;
 	}
 	
+	/**
+	 * Updates the dependent array to not contain toEliminate.
+	 * @param f1 - The Factor from which we eliminate.
+	 * @param toEliminate - The column (variable that we want to eliminate).
+	 */
 	private void dependentElimination(Factor f1, String toEliminate) {
 		this.dependent = new String[f1.dependent.length-1];
 		int conter = 0;
@@ -152,6 +132,11 @@ public class Factor {
 		}
 	}
 
+	/**
+	 * Updates the switchByVal array to not contain the value for toEliminate. 
+	 * @param f1 - The Factor from which we eliminate.
+	 * @param toEliminate - The column (variable that we want to eliminate).
+	 */
 	private void switchByValElimination(Factor f1 , String toEliminate) {
 		this.switchByVal = new int[f1.switchByVal.length-1];
 		boolean flag = true;
@@ -170,6 +155,11 @@ public class Factor {
 		}
 	}
 	
+	/**
+	 * Updates the probability array to not contain the value for toEliminate. 
+	 * @param f1 - The Factor from which we eliminate.
+	 * @param toEliminate - The column (variable that we want to eliminate).
+	 */
 	private void probabilityElimination(Factor f1, String toEliminate) {
 		this.probability = new double[this.matrix.length];
 		int f1toEliminateIndex = get_index_by_value(f1.dependent, toEliminate);
@@ -196,108 +186,6 @@ public class Factor {
 			}	
 		}
 	}
-	
-	//Makes the dependent array from two factors
-	public String[] makeDependent(Factor f1, Factor toeliminate) 
-	{
-		String[] arr = new String[f1.dependent.length-toeliminate.dependent.length];
-		int counter = 0;
-		for (int i = 0; i < f1.dependent.length; i++)
-		{
-			if(!contains(toeliminate.dependent, f1.dependent[i])) 
-			{
-				arr[counter] = f1.dependent[i];
-				counter++;
-			}
-		}
-		return arr;
-	}
-	
-	/**
-	 * 
-	 * @param f1 - The factor from which we eliminate.
-	 * @param row - The row to make the needed array from.
-	 * @param toeliminate - The elimination Factor.
-	 * @return The array of columns to check. 
-	 */
-	public int[] makeremovebycol(Factor f1, int row, Factor toeliminate) 
-	{
-		int[] arr = new int[f1.dependent.length-toeliminate.dependent.length];
-		int counter = 0;
-		for (int i = 0; i < f1.dependent.length; i++)
-		{
-			if(!contains(toeliminate.dependent,f1.dependent[i])) 
-			{
-				arr[counter] = i;
-				counter++;	
-			}	
-		}
-		return arr;
-	}
-
-	/**
-	 * 
-	 * @param f1 - The factor from which we eliminate.
-	 * @param row - The row to make the needed array from.
-	 * @param toeliminate - The elimination Factor.
-	 * @return THe array needed without the eliminate Factor.
-	 */
-	public String[] make_arr(Factor f1, int row, Factor toeliminate) 
-	{
-		String[] arr = new String[f1.dependent.length-toeliminate.dependent.length];
-		int counter = 0;
-		for (int i = 0; i < f1.dependent.length; i++)
-		{
-			if(!contains(toeliminate.dependent,f1.dependent[i])) 
-			{
-				arr[counter] = f1.matrix[row][i];
-				counter++;	
-			}	
-		}
-		return arr;
-	}
-
-	/**
-	 * 
-	 * @param arr - The array that is needed.
-	 * @param f1 - The factor from which the prbabilites needed are.
-	 * @param removebycol - The array of columns to check
-	 * @return The value of the row
-	 */
-	public double get_value_to_merge(String[] arr, Factor f1, int[] removebycol) 
-	{
-		double sum = 0;
-		for (int i = 0; i < f1.matrix.length; i++)
-		{
-			if(is_row_included(f1.matrix[i], arr, removebycol))
-				sum+=f1.probability[i];
-		}
-		return sum;
-	}
-
-	/**
-	 * 
-	 * @param row - The row that is needed (Smaller).
-	 * @param arr - The row from the matrix of the factor (Bigger).
-	 * @param removebycol - Array of columns to check.
-	 * @return true if row in the places specified in removebycol equals arr. 
-	 */
-	public boolean is_row_included(String[] arr, String[] row, int[] removebycol) 
-	{
-		int counter = 0;
-		for (int i = 0; i < row.length; i++) 
-		{
-			if(contains(removebycol, i)) 
-			{
-				if(!arr[i].equals(row[counter]))
-					return false;
-				counter++;
-			}
-			else
-				counter+=2;
-		}
-		return true;
-	}
 
 	public static int get_index_by_value(String[] arr, String s) 
 	{
@@ -307,16 +195,6 @@ public class Factor {
 				return i;
 		}
 		return -1;
-	}
-
-	public boolean contains(int[] arr, int q) 
-	{
-		for (int i = 0; i < arr.length; i++)
-		{
-			if(arr[i] == q)
-				return true;
-		}
-		return false;
 	}
 	
 	public void print() {
@@ -330,7 +208,10 @@ public class Factor {
 		
 	}
 	
-
+	/**
+	 * Makes the Factor matrix and updates this.matrix. 
+	 * @param numOfRows - The number of rows for the matrix.
+	 */
 	public void makeMatrix(int numOfRows ) {
 		String[][] matrix = new String[numOfRows][this.dependent.length];
 		
@@ -344,7 +225,9 @@ public class Factor {
 		this.matrix = matrix;
 	}
 	
-	
+	/**
+	 * Prints the Factor.
+	 */
 	public void printFactor() {
 		Ex1.printArray(this.dependent);
 		for (int i = 0; i < this.matrix.length; i++) {

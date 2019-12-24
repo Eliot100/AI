@@ -7,12 +7,13 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 
 /**
- * @author  Eli Ruvinov
+ * @author  Eli Ruvinov 206416687 and Dvir Sadon 322438938
  */
 public class Ex1 {
 	public static BayesianNetwork BN;
-	/*
+	/**
 	 * this function is the main function in this project
+	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException  {
 		boolean Dbag = false; // true || false
@@ -38,7 +39,11 @@ public class Ex1 {
 		}
 	}
 	
-	// 
+	/**
+	 * This function is putting the relevant Nodes in our Bayesian Network.
+	 * @param br - the BufferedReader of the input file
+	 * @throws IOException
+	 */
 	public static void bagining(BufferedReader br) throws IOException {
 		String st;
 		st = br.readLine();
@@ -88,6 +93,11 @@ public class Ex1 {
 		CPTTextFile(br, tempNode);	
 	}
 	
+	/**
+	 * Handles the CPT part of the file.
+	 * @param br - The BufferedReader of the input file.
+	 * @param tempNode - The current node.
+	 */
 	private static void CPTTextFile(BufferedReader br, Node tempNode) throws IOException {
 		String st = br.readLine();
 		if (st.contains("CPT:")) {
@@ -102,7 +112,11 @@ public class Ex1 {
 			pw.close();
 		} 
 	}
-	
+	/**
+	 * Handles the header  of the Node from the input file.
+	 * @param br - The BufferedReader of the input file.
+	 * @return A Node with the wanted properties. 
+	 */
 	private static Node nodeHeaderHandle(BufferedReader br) throws IOException {
 		boolean Dbag = false; // true || false
 		String st ;
@@ -140,11 +154,11 @@ public class Ex1 {
 			Ex1.BN.get(ParentsNames[i]).SonsNames.add(tempNode.name);
 		}
 		
-		// adding a list of Nodes parents
-		tempNode.Parents = new Node[tempNode.numOfParents];
-		for (int i = 0; i < tempNode.numOfParents; i++) {
-			tempNode.Parents[i] = Ex1.BN.get(ParentsNames[i]);
-		}
+//		// adding a list of Nodes parents
+//		tempNode.Parents = new Node[tempNode.numOfParents];
+//		for (int i = 0; i < tempNode.numOfParents; i++) {
+//			tempNode.Parents[i] = Ex1.BN.get(ParentsNames[i]);
+//		}
 		return tempNode;
 	}
 	

@@ -23,51 +23,38 @@ public class Algorithms {
 	public static String VariableElimination( String st) {
 		Algorithms.numOfPlus = 0;
 		Algorithms.numOfMul = 0;
-		// Making variables for later use (From the input file queries) 
 		query q = query.init(st);
-		Factor[] arrayF = getAllNeededFactors(q);
-//		System.out.println("Printing: ");
-//		for (int i = 0; i < arrayF.length; i++) {
-//			arrayF[i].printFactor();
-//		}
-		Factor[] arrayF2 = arrayF_Init(q);
-//		for (int i = 0; i < arrayF.length; i++) {
-//			arrayF[i].printFactor();
-//		}
-//		for (int i = 0; i < arrayF2.length; i++) {
-//			arrayF2[i].printFactor();
-//		}
+//		Factor[] arrayF = getAllNeededFactors(q);
+		Factor[] arrayF = arrayF_Init(q);
+		
 		for (int i = 0; i < q.toEliminate.length; i++) {
 			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
 		}
-//		System.out.println("Printing2: "+ arrayF.length);
-//		for (int i = 0; i < arrayF.length; i++) {
-//			System.out.println(i+"   "+arrayF[i]);
-//		}
+		
 		Factor temp = arrayF[0];
 		if(arrayF.length != 1) {
 			for (int i = 1; i < arrayF.length; i++) {
-				System.out.println("***  "+i+" "+arrayF[i]);
+				System.out.println("***  "+i+" "+arrayF[i]+"  len : "+arrayF.length);
 				temp = join(temp, arrayF[i]);
 			}
 		}
 		temp.normalize();
-//		temp.printFactor();
 		double prob = getfinalProbability(temp, q);
 		prob  = round(prob, 5);
 		System.out.println(String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 		return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 	}
 	
+	// Rounds out the double number gotten (Was taken from Geeks For Geeks)  
 	public static double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
-
 	    long factor = (long) Math.pow(10, places);
 	    value = value * factor;
 	    long tmp = Math.round(value);
 	    return (double) tmp / factor;
 	}
 
+	// Returns a double that represents the final probability of the query.
 	private static double getfinalProbability(Factor temp, query q) {
 		boolean flag;
 		for (int i = 0; i < temp.matrix.length; i++) {
@@ -93,6 +80,9 @@ public class Algorithms {
 		return 0;
 	}
 
+	
+	@SuppressWarnings("unused")
+	// Returns a Factor array containing all the lineage Factors.
 	private static Factor[] getAllNeededFactors(query q) {
 		ArrayList<String> lineage = new ArrayList<String>();
 		lineage.add(q.target.name);
@@ -100,7 +90,6 @@ public class Algorithms {
 			lineage.add(q.GivenNodes[i]);
 		}
 		for (int i = 0; i < lineage.size(); i++) {
-//			System.out.println(Ex1.BN.get(lineage.get(i)));
 			for (int j = 0; j < Ex1.BN.get(lineage.get(i)).numOfParents; j++) {
 				if(!lineage.contains(Ex1.BN.get(lineage.get(i)).ParentsNames[j])) {
 					lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
@@ -111,11 +100,11 @@ public class Algorithms {
 		Factor[] arrayF = new Factor[lineage.size()];
 		for (int i = 0; i < arrayF.length; i++) {
 			arrayF[i] = Ex1.BN.get(lineage.get(i)).cptFactor;
-//			Ex1.BN.get(lineage.get(i)).cptFactor.printFactor();
 		}
 		return arrayF;
 	}
 
+	// Creates the arrayF array from the gotten query.
 	private static Factor[] arrayF_Init(query q) {
 		Factor[] arrayF = new Factor[Ex1.BN.size()];
 		Iterator<Node> it = Ex1.BN.iteretor();
@@ -143,6 +132,11 @@ public class Algorithms {
 		public String[] GivenNodes;
 		public String[] GivenValsByNode;
 		
+		/**
+		 * 
+		 * @param st - The String to make the query out of
+		 * @return a query object made from the String gotten.
+		 */
 		public static query init(String st) {
 			query q = new query();
 			boolean flag1 = true;
@@ -178,11 +172,14 @@ public class Algorithms {
 		}
 	}
 	
+	/**
+	 * Joins and eliminates all the related Factors
+	 * @param toEliminate - The Factor to eliminate.
+	 * @param arrayF - Array of all the Factors related
+	 * @return A final Factor after joining and eliminating 
+	 */
 	private static Factor[] JoinAndEliminate(String toEliminate, Factor[] arrayF) {
 		boolean[] flags = ifEliminate(arrayF, toEliminate);
-//		for (int i = 0; i < flags.length; i++) {
-//			System.out.println(flags[i]);
-//		}
 		int cont = 0;
 		for (int j = 0; j < flags.length; j++) { 
 			if(flags[j])
@@ -193,11 +190,6 @@ public class Algorithms {
 		cont = 0;
 		int cont2 = 0;
 		for (int j = 0; j < arrayF.length; j++) {
-			if(cont == 2 || cont2 == 2) 
-			{
-				System.out.println("j = "+j);
-			}
-				
 			if(flags[j]) {
 				Factors2Eliminate[cont] = arrayF[j];
 				cont++;
@@ -207,14 +199,7 @@ public class Algorithms {
 				cont2++;
 			}
 		}
-//		System.out.println(Factors2Eliminate.length);
-//		System.out.println("Printing3: ");
-//		for (int i = 0; i < Factors2Eliminate.length; i++) {
-//			Factors2Eliminate[i].printFactor();
-//		}
-		
 		FactorsNot2Eliminate[cont2] = joinAll(Factors2Eliminate, toEliminate);
-		
 		return FactorsNot2Eliminate;
 	}
 	
@@ -228,30 +213,24 @@ public class Algorithms {
 		return sum;
 	}
 	
+	// Joins all the related Factors.
 	public static Factor joinAll(Factor[] farr, String toEliminate){
 		Factor f1 = null;
 		if(farr.length > 0 ) 
 		{
 			f1 = farr[0];
-			//System.out.println("f[0]");
-			//f1.printFactor();
 		}
 		else
 			return null;
-		System.out.println("farr[2] = ");
-//		farr[2].printFactor();	
 		for (int i = 1; i < farr.length; i++) {
 			f1 = join(f1, farr[i]);
-			//System.out.println("hey "+ i);
 			
 		}
-		f1.printFactor();
-//		System.out.println(toEliminate);
 		f1 = f1.Elimination( toEliminate);
-//		f1.printFactor();
 		return f1;
 	}
-
+	
+	// Gets two Factors, joins them and returns the joined Factor.
 	private static Factor join(Factor f1, Factor f2) {
 		removeUnwantedDependecies(f1);
 		removeUnwantedDependecies(f2);
@@ -261,10 +240,10 @@ public class Algorithms {
 		int numOfRows = findNumOfRows(newfactor);
 		newfactor.makeMatrix(numOfRows);
 		newfactor.probability = makeProbability(f1, f2, numOfRows, newfactor);
-//		newfactor.printFactor();
 		return newfactor;
 	}
 	
+	// Returns the number of rows needed for the Matrix of the Factor
 	public static int findNumOfRows(Factor newfactor) {
 		for (int i = 0; i < newfactor.switchByVal.length; i++) {
 			if(newfactor.switchByVal[i] != 0 ) {
@@ -275,7 +254,7 @@ public class Algorithms {
 		}
 		return 1;
 	}
-
+	// Makes the Probability array used in joining for the two Factors.
 	private static double[] makeProbability(Factor f1, Factor f2, int ProbabilitySize, Factor newfactor) {
 		double[] probability = new double[ProbabilitySize];
 		for (int i = 0; i < probability.length; i++) {
@@ -285,6 +264,7 @@ public class Algorithms {
 		return probability;
 	}
 	
+	// Returns the probability  for the row (rowProb) for the two Factors gotten. 
 	private static double ProbByRow(int rowProb, Factor f, Factor newfactor )
 	{
 		if(f.probability.length == 1 && f.dependent.length == 0) {
@@ -305,6 +285,7 @@ public class Algorithms {
 		return 0;
 	}
 	
+	// Creates the switchByVal array used in joining.
 	private static int[] makeSwitch(String[] dependent, int size) {
 		int[] switchByVal = new int[size];
 		int switch0 = 1;
@@ -315,6 +296,7 @@ public class Algorithms {
 		return switchByVal;
 	}
 	
+	// Removes the unwanted rows from the factor.
 	private static void removeUnwantedDependecies(Factor f) 
 	{
 		boolean[] flags = getZerosSwitch(f);
@@ -323,7 +305,6 @@ public class Algorithms {
 			if(!flags[i])
 				size++;
 		}
-		
 		String[] dependents = new String[size];
 		int counter = 0;
 		for (int j = 0; j < f.dependent.length; j++) 
@@ -331,14 +312,11 @@ public class Algorithms {
 				dependents[counter] = f.dependent[j];
 				counter++;
 			}
-		
 		f.switchByVal = getNonZeroArr(f, flags);
-		for (int i = 0; i < f.switchByVal.length; i++) {
-			System.out.println(f.switchByVal[i]);
-		}
 		f.dependent = dependents;
 	} 
 	
+	// Returns an array without zeros in it.
 	private static int[] getNonZeroArr(Factor f1, boolean[] flags) {
 		int counter = 0;
 		for (int i = 0; i < flags.length; i++) {
@@ -356,8 +334,8 @@ public class Algorithms {
 		return switchbByVal;
 	}
 	
+	// Returns a boolean array (true = 0, false = not 0) 
 	private static boolean[] getZerosSwitch(Factor f1) {
-		System.out.println(f1);
 		boolean[] zeroCols = new boolean[f1.switchByVal.length];
 		for (int i = 0; i < f1.switchByVal.length; i++) {
 			if(f1.switchByVal[i] == 0)
@@ -368,6 +346,13 @@ public class Algorithms {
 		return zeroCols;
 	}
 	
+	/**
+	 * 
+	 * @param s1 - First String array.
+	 * @param s2 - Second String array
+	 * @param size - The size of the new String array that is returned.
+	 * @return A String array that contains all unique values in the two String arrays
+	 */
 	private static String[] get_unique(String[] s1, String[] s2, int size) {
 		String[] newS = new String[size];
 		int counter = 0;
@@ -400,7 +385,6 @@ public class Algorithms {
 			boolean[] flags = new boolean[allFactors.length];
 			for (int i = 0; i < allFactors.length; i++) {
 				for (int j = 0; !flags[i] && j < allFactors[i].dependent.length; j++) {
-//					System.out.println(allFactors[i].dependent[j]+" =? "+nodeNameToEliminate);
 					if(allFactors[i].dependent[j].equals(nodeNameToEliminate))
 						flags[i] = true;
 				}
