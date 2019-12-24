@@ -20,96 +20,104 @@ public class Algorithms {
 	 * 0.84902,7,12
 	 */
 	public static String VariableElimination( String st) {
-//		boolean Dbag = false; // true || false
-		
-		
 		// Making variables for later use (From the input file queries) 
-		String ans ="";
-		boolean flag1 = true;
-		boolean flag2 = true;
-		boolean flag3 = true;
-		int indexLine = 0, indexEndP = 0, indexeq = 0;
-		for (int i = 0; flag3  ; i++) {
-			if (flag1 && st.charAt(i) == '=') {
-				indexeq = i;
-				flag1 =  false;
-			}
-			else if (!flag1 && flag2 && st.charAt(i)== '|' ) {
-				indexLine = i;
-				flag2 =  false;
-			} 
-			else if (!flag2 && st.charAt(i)== ')') {
-				indexEndP = i;
-				flag3 =  false;
-			}
-		}
-		Node target = Ex1.BN.get(""+st.substring(2, indexeq));
-		String valTarget = st.substring(indexeq+1, indexLine);
-		String[] GivenPs = st.substring(indexLine+1, indexEndP).split(",");
-		String[] toEliminate = st.substring( indexEndP+2, st.length() ).split("-");
-		String[] GivenNodes = new String[GivenPs.length];
-		String[] GivenValsByNode = new String[GivenPs.length];
-		for (int i = 0; i < GivenPs.length; i++) {
-			String[] Given = GivenPs[i].split("=");
-			GivenNodes[i] = Given[0];
-			GivenValsByNode[i] = Given[1];
-		}
-
+		query q = query.init(st);
+		Factor[] arrayF = arrayF_Init(q);
 		
+		for (int i = 0; i < q.toEliminate.length; i++) {
+			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
+		}
+		
+//		Factor f = join(arrayF[4],arrayF[3]);
+		if (arrayF.length != 1 || arrayF[0].probability.length != 1)
+			return null;
+		return (arrayF[0].probability[0]+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
+	}
+	
+	private static Factor[] arrayF_Init(query q) {
 		Factor[] arrayF = new Factor[Ex1.BN.size()];
 		Iterator<Node> it = Ex1.BN.iteretor();
 		int cont = 0;
 		while(it.hasNext()) {
 			Node tempNode = it.next();
 			arrayF[cont] = tempNode.CTPtoFactor();
-			if(Factor.contains(arrayF[cont].dependent,target.name))
-				arrayF[cont].removeGivens(target.name, valTarget);
-			for (int i = 0; i < GivenNodes.length; i++) {
-				if(Factor.contains(arrayF[cont].dependent, GivenNodes[i]))
-					arrayF[cont].removeGivens(GivenNodes[i], GivenValsByNode[i]);
+			if(Factor.contains(arrayF[cont].dependent,q.target.name))
+				arrayF[cont].removeGivens(q.target.name, q.valTarget);
+			for (int i = 0; i < q.GivenNodes.length; i++) {
+				if(Factor.contains(arrayF[cont].dependent, q.GivenNodes[i]))
+					arrayF[cont].removeGivens(q.GivenNodes[i], q.GivenValsByNode[i]);
 			}
 			removeUnwantedDependecies(arrayF[cont]);
 			arrayF[cont].makeMatrix(findNumOfRows(arrayF[cont]));
 			cont++;
 		}
-//		for (int j = 0; j < arrayF.length; j++) {
-//			arrayF[j].printFactor();
-//		}
-		for (int i = 0; i < toEliminate.length; i++) {
-			
-			arrayF = JoinAndEliminate( toEliminate[i], arrayF);
-			
+		return arrayF;
+	}
+
+	public static class query {
+		public Node target;
+		public String valTarget;
+		public String[] toEliminate;
+		public String[] GivenNodes;
+		public String[] GivenValsByNode;
+		
+		public static query init(String st) {
+			query q = new query();
+			boolean flag1 = true;
+			boolean flag2 = true;
+			boolean flag3 = true;
+			int indexLine = 0, indexEndP = 0, indexeq = 0;
+			for (int i = 0; flag3  ; i++) {
+				if (flag1 && st.charAt(i) == '=') {
+					indexeq = i;
+					flag1 =  false;
+				}
+				else if (!flag1 && flag2 && st.charAt(i)== '|' ) {
+					indexLine = i;
+					flag2 =  false;
+				} 
+				else if (!flag2 && st.charAt(i)== ')') {
+					indexEndP = i;
+					flag3 =  false;
+				}
+			}
+			q.target = Ex1.BN.get(""+st.substring(2, indexeq));
+			q.valTarget = st.substring(indexeq+1, indexLine);
+			String[] GivenPs = st.substring(indexLine+1, indexEndP).split(",");
+			q.toEliminate = st.substring( indexEndP+2, st.length() ).split("-");
+			q.GivenNodes = new String[GivenPs.length];
+			q.GivenValsByNode = new String[GivenPs.length];
+			for (int i = 0; i < GivenPs.length; i++) {
+				String[] Given = GivenPs[i].split("=");
+				q.GivenNodes[i] = Given[0];
+				q.GivenValsByNode[i] = Given[1];
+			}
+			return q;
 		}
-//		for (int j = 0; j < arrayF.length; j++) {
-//			arrayF[j].printFactor();
-//		}
-//		Factor f = join(arrayF[4],arrayF[3]);
-		return ans;
 	}
 	
 	private static Factor[] JoinAndEliminate(String toEliminate, Factor[] arrayF) {
 		boolean[] flags = ifEliminate(arrayF, toEliminate);
 		int cont = 0;
-		for (int j = 0; j < flags.length; j++) 
+		for (int j = 0; j < flags.length; j++) { 
 			if(flags[j])
 				cont++;
+		}
 		Factor[] Factors2Eliminate = new Factor[cont];
 		Factor[] FactorsNot2Eliminate = new Factor[flags.length-cont+1];
 		cont = 0;
+		int cont2 = 0;
 		for (int j = 0; j < arrayF.length; j++) {
 			if(flags[j]) {
 				Factors2Eliminate[cont] = arrayF[j];
 				cont++;
 			}
-		}
-		cont = 0;
-		for (int j = 0; j < arrayF.length; j++) {
-			if(!flags[j]) {
-				FactorsNot2Eliminate[cont] = arrayF[j];
-				cont++;
+			else {
+				FactorsNot2Eliminate[cont2] = arrayF[j];
+				cont2++;
 			}
 		}
-		FactorsNot2Eliminate[cont] = joinAll(Factors2Eliminate, toEliminate);
+		FactorsNot2Eliminate[cont2] = joinAll(Factors2Eliminate, toEliminate);
 
 		return FactorsNot2Eliminate;
 	}
@@ -118,6 +126,7 @@ public class Algorithms {
 		Factor f1 = null;
 		if(farr.length > 0 )
 			f1 = farr[0];
+		System.out.println(f1);
 		for (int i = 1; i < farr.length; i++) {
 			f1.printFactor();
 			f1 = join(f1, farr[i]);
@@ -133,9 +142,7 @@ public class Algorithms {
 		newfactor.switchByVal = makeSwitch(newfactor.dependent, Factor.count_unique(f1.dependent, f2.dependent));
 		int numOfRows = findNumOfRows(newfactor);
 		newfactor.makeMatrix(numOfRows);
-
 		newfactor.probability = makeProbability(f1, f2, numOfRows, newfactor);
-	
 		return newfactor;
 	}
 	
