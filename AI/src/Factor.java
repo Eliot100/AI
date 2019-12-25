@@ -4,9 +4,9 @@ public class Factor {
 	double[] probability = null; // The probability (0-1)
 	String[] dependent = null; // The Strings the factor gets 
 	int[] switchByVal = null; // switchByVal[i] is the number when dependent[i] is Repeated itself
-	
+
 	public Factor() {;}
-	
+
 	/**
 	 * Normalizes this Factor probability array (sum/probability)
 	 */
@@ -17,7 +17,7 @@ public class Factor {
 			this.probability[i] = this.probability[i]/sum;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param c1 - The first array to check.
@@ -34,7 +34,7 @@ public class Factor {
 		}
 		return counter;
 	}
-	
+
 	public static boolean contains(String[] c1, String nodeName) 
 	{
 		for (int i = 0; i < c1.length; i++)
@@ -44,7 +44,7 @@ public class Factor {
 		}
 		return false;
 	} 
-	
+
 	/**
 	 * Removes the redundant rows.
 	 * @param nodeName - The name of the Node.
@@ -63,7 +63,7 @@ public class Factor {
 
 			int j = 0;
 			for (int i = 0; i < flag.length; i++) {
-				
+
 				if(flag[i]) {
 					arr1[j] = this.probability[i];
 					j++;
@@ -73,7 +73,7 @@ public class Factor {
 			this.switchByVal[index] = 0; 
 		}
 	}
-	
+
 	/**
 	 * Makes an array of boolean values that are represent in or out of the future array(true: in , false:out)
 	 * @param nodeName - The name of the Node.
@@ -111,11 +111,11 @@ public class Factor {
 		Factor f2 = new Factor();
 		f2.dependentElimination(this , toEliminate);
 		f2.switchByValElimination(this , toEliminate);
-		f2.makeMatrix(Algorithms.findNumOfRows(f2));
+		f2.makeMatrix();
 		f2.probabilityElimination(this , toEliminate);
 		return f2;
 	}
-	
+
 	/**
 	 * Updates the dependent array to not contain toEliminate.
 	 * @param f1 - The Factor from which we eliminate.
@@ -154,7 +154,7 @@ public class Factor {
 				this.switchByVal[j-1] = f1.switchByVal[j];
 		}
 	}
-	
+
 	/**
 	 * Updates the probability array to not contain the value for toEliminate. 
 	 * @param f1 - The Factor from which we eliminate.
@@ -196,25 +196,14 @@ public class Factor {
 		}
 		return -1;
 	}
-	
-	public void print() {
-		System.out.println(this.dependent[0]);
-		for (int i = 0; i < probability.length; i++) {
-			if(i == probability.length-1)
-				System.out.println(this.probability[i]);
-			else
-				System.out.print(this.probability[i]+","+"\n");
-		}
-		
-	}
-	
+
 	/**
 	 * Makes the Factor matrix and updates this.matrix. 
 	 * @param numOfRows - The number of rows for the matrix.
 	 */
-	public void makeMatrix(int numOfRows ) {
+	public void makeMatrix() {
+		int numOfRows = this.findNumOfRows();
 		String[][] matrix = new String[numOfRows][this.dependent.length];
-		
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix[0].length; j++) {
 				int nodeVarValSize = Ex1.BN.get(this.dependent[j]).VarValues.length;
@@ -224,12 +213,103 @@ public class Factor {
 		}
 		this.matrix = matrix;
 	}
-	
+
+	// Returns the number of rows needed for the Matrix of the Factor
+	public int findNumOfRows() {
+		for (int i = 0; i < this.switchByVal.length; i++) {
+			if(this.switchByVal[i] != 0 ) {
+				return this.switchByVal[i]*Ex1.BN.get(this.dependent[i]).VarValues.length;
+			}
+			else
+				continue;
+		}
+		return 1;
+	}
+
+	// Removes the unwanted rows from the factor.
+	public void removeUnwantedDependecies() 
+	{
+		boolean[] flags = this.getZerosSwitch();
+		int size = 0;
+		for (int i = 0; i < flags.length; i++) {
+			if(!flags[i])
+				size++;
+		}
+		String[] dependents = new String[size];
+		int counter = 0;
+		for (int j = 0; j < this.dependent.length; j++) 
+			if(!flags[j]) {
+				dependents[counter] = this.dependent[j];
+				counter++;
+			}
+		this.switchByVal = getNonZeroArr(this, flags);
+		this.dependent = dependents;
+	} 
+
+	// Returns a boolean array (true = 0, false = not 0) 
+	private boolean[] getZerosSwitch() {
+		boolean[] zeroCols = new boolean[this.switchByVal.length];
+		for (int i = 0; i < this.switchByVal.length; i++) {
+			if(this.switchByVal[i] == 0)
+				zeroCols[i] = true;
+			else
+				zeroCols[i] = false;
+		}
+		return zeroCols;
+	}
+
+	// Makes the Probability array used in joining for the two Factors.
+	public void makeProbability(Factor f1, Factor f2) {
+		double[] probability = new double[this.findNumOfRows()];
+		for (int i = 0; i < probability.length; i++) {
+			probability[i] = this.ProbByRow(i, f1)*this.ProbByRow(i, f2);
+			Algorithms.numOfMul ++;
+		}
+		this.probability = probability;
+	}
+	// Returns the probability  for the row (rowProb) for the two Factors gotten. 
+		public double ProbByRow(int rowProb, Factor f )
+		{
+			if(f.probability.length == 1 && f.dependent.length == 0) {
+				return f.probability[0];
+			}
+			int rowOldFactor = 0, colOldFactor = 0, counter = 0;//, colNewFactor = 0
+			for (; rowOldFactor < f.probability.length; rowOldFactor++) {
+				for (; colOldFactor < f.dependent.length; colOldFactor++) {
+					if(this.matrix[rowProb][Factor.get_index_by_value(this.dependent,f.dependent[colOldFactor])]!=f.matrix[rowOldFactor][colOldFactor])
+						break;
+					else
+						counter++;
+				}
+				if(counter == f.dependent.length)
+					return f.probability[rowOldFactor];
+			}
+			return 0;
+		}
+
+	// Returns an array without zeros in it.
+	private int[] getNonZeroArr(Factor f1, boolean[] flags) {
+		int counter = 0;
+		for (int i = 0; i < flags.length; i++) {
+			if(!flags[i]) 
+				counter++;
+		}
+		int[] switchbByVal = new int[counter];
+		counter = 0;
+		for (int i = 0; i < flags.length; i++) {
+			if(!flags[i]) {
+				switchbByVal[counter] = f1.switchByVal[i];
+				counter++;
+			}
+		}
+		return switchbByVal;
+	}
 	/**
 	 * Prints the Factor.
 	 */
 	public void printFactor() {
 		Ex1.printArray(this.dependent);
+		Ex1.printIntArray(this.switchByVal);
 		for (int i = 0; i < this.matrix.length; i++) {
 			for (int j = 0; j < this.matrix[0].length; j++) {
 				System.out.print(this.matrix[i][j]+" ");

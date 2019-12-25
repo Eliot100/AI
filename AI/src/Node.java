@@ -136,20 +136,32 @@ public class Node {
 				pernts += this.ParentsNames[i]+",";
 		}
 		f.dependent = pernts.split(",");
-		f.switchByVal = new int[this.PrentSwithVal.length+1];
-		
-		for (int i = 0; i < this.PrentSwithVal.length; i++) {
-				f.switchByVal[i+1] = this.PrentSwithVal[i] ;
-		}
-		
-		if(f.switchByVal.length > 1)
-			f.switchByVal[0] = f.switchByVal[1]*this.VarValues.length;
-		else 
-			f.switchByVal[0] = 1;
+		f.switchByVal = makeSwitch(f.dependent);
+//		f.switchByVal = new int[this.PrentSwithVal.length+1];
+//		
+//		for (int i = 0; i < this.PrentSwithVal.length; i++) {
+//				f.switchByVal[i+1] = this.PrentSwithVal[i] ;
+//		}
+//		
+//		if(f.switchByVal.length > 1)
+//			f.switchByVal[0] = f.switchByVal[1]*this.VarValues.length;
+//		else 
+//			f.switchByVal[0] = 1;
 		f.probability = probabilities;
-		f.makeMatrix(f.probability.length);
+		f.makeMatrix();
 		return f;
 	}
+	
+	// Creates the switchByVal array.
+		public static int[] makeSwitch(String[] dependent) {
+			int[] switchByVal = new int[dependent.length];
+			int switch0 = 1;
+			for (int i = switchByVal.length-1; i >= 0; i--) {
+				switchByVal[i] = switch0;
+				switch0 *= Ex1.BN.get(dependent[i]).VarValues.length;
+			}
+			return switchByVal;
+		}
 
 	public void buildSwithbyVal() {
 		int SwithValueIndex = 1;
@@ -159,6 +171,5 @@ public class Node {
 			SwithValueIndex *= Ex1.BN.get(this.ParentsNames[i]).VarValues.length;
 		}
 		this.PrentSwithVal = PrentnumSwithValueIndex;
-
 	}
 }

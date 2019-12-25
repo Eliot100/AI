@@ -16,19 +16,12 @@ public class Ex1 {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException  {
-		boolean Dbag = false; // true || false
-		File input = new File("input.txt");
+		boolean Dbag = true; // true || false
+		File input = new File("input2.txt");
 		Ex1.BN = new BayesianNetwork();
 		BufferedReader br = new BufferedReader(new FileReader(input)); 
 		Ex1.bagining(br);
 		Ex1.verticesBuild(br);
-		File OutputFile = new File("output.txt");
-		OutputFile.createNewFile();
-		FileWriter fw = new FileWriter(OutputFile);
-		PrintWriter pw = new PrintWriter(fw);
-		Ex1.writeOutputFile(br, pw);
-		pw.close();
-		br.close();
 		if(Dbag) {
 			Iterator<Node> it = Ex1.BN.iteretor();
 			while (it.hasNext()) {
@@ -37,6 +30,14 @@ public class Ex1 {
 				Node.printCPT(temp.name);
 			}
 		}
+		File OutputFile = new File("output.txt");
+		OutputFile.createNewFile();
+		FileWriter fw = new FileWriter(OutputFile);
+		PrintWriter pw = new PrintWriter(fw);
+		Ex1.writeOutputFile(br, pw);
+		pw.close();
+		br.close();
+		
 	}
 	
 	/**
@@ -175,8 +176,7 @@ public class Ex1 {
 		if(!st.contains("Queries")) {
 			throw new RuntimeException("This isn't the Queries part.");
 		}
-		st = br.readLine();
-		
+//		st = br.readLine();
 		while ((st = br.readLine()) != null) {
 			if(st.contains("P(") && st.contains(")")) {
 				pw.println( Algorithms.VariableElimination(st) );
