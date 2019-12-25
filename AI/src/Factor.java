@@ -10,9 +10,12 @@ public class Factor {
 	/**
 	 * Normalizes this Factor probability array (sum/probability)
 	 */
-	public void normalize() 
-	{
-		double sum = Algorithms.sumArr(this.probability);
+	public void normalize() {
+		double sum = this.probability[0]; 
+		for (int i = 1; i < this.probability.length; i++){
+			sum+=this.probability[i];
+			Algorithms.numOfPlus++;
+		}
 		for (int i = 0; i < this.probability.length; i++) {
 			this.probability[i] = this.probability[i]/sum;
 		}
@@ -50,8 +53,7 @@ public class Factor {
 	 * @param nodeName - The name of the Node.
 	 * @param givenValue - The value that should stay.
 	 */
-	public void removeGivens(String nodeName, String givenValue) 
-	{
+	public void removeGivens(String nodeName, String givenValue){
 		int index = Factor.get_index_by_value(this.dependent , nodeName);
 		if(index >= 0) {
 			int valueInCol = this.switchByVal[index];
@@ -63,7 +65,6 @@ public class Factor {
 
 			int j = 0;
 			for (int i = 0; i < flag.length; i++) {
-
 				if(flag[i]) {
 					arr1[j] = this.probability[i];
 					j++;
@@ -107,7 +108,7 @@ public class Factor {
 	 * @param toEliminate - The column (variable that we want to eliminate). 
 	 * @return A Factor that is toEliminate eliminated from f1.
 	 */
-	public Factor Elimination( String toEliminate){
+	public Factor Elimination(String toEliminate){
 		Factor f2 = new Factor();
 		f2.dependentElimination(this , toEliminate);
 		f2.switchByValElimination(this , toEliminate);
@@ -137,7 +138,7 @@ public class Factor {
 	 * @param f1 - The Factor from which we eliminate.
 	 * @param toEliminate - The column (variable that we want to eliminate).
 	 */
-	private void switchByValElimination(Factor f1 , String toEliminate) {
+	public void switchByValElimination(Factor f1 , String toEliminate) {
 		this.switchByVal = new int[f1.switchByVal.length-1];
 		boolean flag = true;
 		int i = 0;
@@ -160,7 +161,7 @@ public class Factor {
 	 * @param f1 - The Factor from which we eliminate.
 	 * @param toEliminate - The column (variable that we want to eliminate).
 	 */
-	private void probabilityElimination(Factor f1, String toEliminate) {
+	public void probabilityElimination(Factor f1, String toEliminate) {
 		this.probability = new double[this.matrix.length];
 		int f1toEliminateIndex = get_index_by_value(f1.dependent, toEliminate);
 		boolean flag ;
@@ -276,7 +277,7 @@ public class Factor {
 			int rowOldFactor = 0, colOldFactor = 0, counter = 0;//, colNewFactor = 0
 			for (; rowOldFactor < f.probability.length; rowOldFactor++) {
 				for (; colOldFactor < f.dependent.length; colOldFactor++) {
-					if(this.matrix[rowProb][Factor.get_index_by_value(this.dependent,f.dependent[colOldFactor])]!=f.matrix[rowOldFactor][colOldFactor])
+					if(!this.matrix[rowProb][Factor.get_index_by_value(this.dependent,f.dependent[colOldFactor])].equals(f.matrix[rowOldFactor][colOldFactor]))
 						break;
 					else
 						counter++;
@@ -318,4 +319,31 @@ public class Factor {
 		}
 		System.out.println();
 	}
+
+//	public void EliminateByTargetVal(String Thedependent, String targetVal) {
+//		this.switchByValElimination(this, targetVal);
+//		this.dependentElimination(this, Thedependent); 
+//		int counter=0;
+//		for (int i = 0; i < this.dependent.length; i++) {
+//			if(this.dependent[i].equals(Thedependent)) {
+//				for (int j = 0; j < this.matrix.length; j++) {
+//					if(this.matrix[i][j].equals(targetVal) )
+//						counter++;
+//				}
+//			}
+//		}
+//		double[] probability = new double[counter];
+//		counter=0;
+//		for (int i = 0; i < this.dependent.length; i++) {
+//			if(this.dependent[i].equals(Thedependent)) {
+//				for (int j = 0; j < this.matrix.length; j++) {
+//					if(this.matrix[i][j].equals(targetVal) ) {
+//						probability[counter] =this.probability[j];
+//						counter++;
+//					}
+//				}
+//			}
+//		}
+//		this.makeMatrix();
+//	}
 }
