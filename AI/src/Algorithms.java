@@ -19,20 +19,20 @@ public class Algorithms {
 	 * 0.28417,7,16
 	 * 0.84902,7,12
 	 */
-	public static String VariableElimination( String st) {
+	public static String VariableElimination(String st) {
 		Algorithms.numOfPlus = 0;
 		Algorithms.numOfMul = 0;
 		query q = query.init(st);
 		if(q.flagIfImmediate) {
 			double prob = getfinalProbability(q.target.CTPtoFactor(), q);
 			prob  = round(prob, 5);
-			System.out.println(String.format("%.5f", prob)+",0,0");
+			System.out.println(String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 			return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 		}
 		Factor[] arrayF = getAllNeededFactors(q);
-//		Factor[] arrayF = arrayF_Init(q);
 		for (int i = 0; i < arrayF.length; i++) 
 			arrayF[i].printFactor();
+//		Factor[] arrayF = arrayF_Init(q);
 		for (int i = 0; i < q.toEliminate.length; i++) 
 			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
 		Factor temp = arrayF[0];
@@ -40,8 +40,16 @@ public class Algorithms {
 			for (int i = 1; i < arrayF.length; i++) 
 				temp = join(temp, arrayF[i]);
 		}
+//		temp.printFactor();
 		temp.normalize();
-		double prob = getfinalProbability(temp, q);
+		double prob;
+//		if(temp.findNumOfRows() == 1) {
+//			prob = temp.probability[0];
+//			prob  = round(prob, 5);
+//			System.out.println(String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
+//			return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
+//		}
+		prob = getfinalProbability(temp, q);
 		prob  = round(prob, 5);
 		System.out.println(String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 		return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
@@ -90,17 +98,51 @@ public class Algorithms {
 		}
 		for (int i = 0; i < lineage.size(); i++) {
 			for (int j = 0; j < Ex1.BN.get(lineage.get(i)).numOfParents; j++) {
-				if(!lineage.contains(Ex1.BN.get(lineage.get(i)).ParentsNames[j])) {
+				boolean flag = false;
+				for (int k = 0; k < q.GivenNodes.length; k++) {
+					if(Ex1.BN.get(lineage.get(i)).ParentsNames[j].equals(q.GivenNodes[k]))
+						flag = true;
+				}
+				if(!flag  && !lineage.contains(Ex1.BN.get(lineage.get(i)).ParentsNames[j])  ) {
 					lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
 				}
 
 			}
+//			boolean flag = false;
+//			if(i == lineage.size()-1) {
+//				for (int j = 0; j < lineage.size(); j++) {
+//					for (int j2 = 0; j2 < Ex1.BN.get(lineage.get(j)).ParentsNames.length; j2++) {
+//						for (int k = 0; k < q.GivenNodes.length; k++) {
+//							if(Ex1.BN.get(lineage.get(j)).ParentsNames[j2].equals(q.GivenNodes[k]))
+//								flag = true;
+//						}
+//						if(!flag)
+//							lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
+//					}
+//					
+//					
+////					for (int k = 0; k < q.GivenNodes.length; k++) {
+////						for (int k2 = 0; k2 < Ex1.BN.get(lineage.get(j)).ParentsNames[j].length(); k2++) {
+////							if(Ex1.BN.get(lineage.get(j)).ParentsNames[k2].equals(q.GivenNodes[k])) {
+////								flag = false;
+////							}
+////						}
+////						if(flag)
+////							lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
+////					}
+//				}
+//				if(!flag)
+//					continue;
+//			}
 		}
 		Factor[] arrayF = new Factor[lineage.size()];
 		for (int i = 0; i < arrayF.length; i++) {
 			arrayF[i] = Ex1.BN.get(lineage.get(i)).cptFactor;
-//			arrayF[i].EliminateByTargetVal( q.target.name, q.valTarget); 
-			
+//			if(Factor.contains(arrayF[i].dependent, q.target.name))
+//				arrayF[i].EliminateByTargetVal( q.target.name, q.valTarget); 
+			for (int j = 0; j < q.GivenNodes.length; j++) {
+				arrayF[i].EliminateByTargetVal( q.GivenNodes[j], q.GivenValsByNode[j]); 
+			}
 			
 			
 //			for (int j = 0; j < q.GivenNodes.length; j++) {
@@ -118,6 +160,7 @@ public class Algorithms {
 //			arrayF[i].removeUnwantedDependecies();
 //			arrayF[i].makeMatrix();
 //			arrayF[i].probabilityElimination(f1, q.GivenNodes[j]);
+			arrayF[i].printFactor();
 		}
 		return arrayF;
 	}

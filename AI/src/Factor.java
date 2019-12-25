@@ -27,8 +27,7 @@ public class Factor {
 	 * @param c2 - The Second array to check
 	 * @return The number of unique Strings. 
 	 */ 
-	public static int count_unique(String[] c1, String[] c2) 
-	{
+	public static int count_unique(String[] c1, String[] c2) {
 		int counter = c1.length;
 		for (int i = 0; i < c2.length; i++)
 		{
@@ -38,8 +37,7 @@ public class Factor {
 		return counter;
 	}
 
-	public static boolean contains(String[] c1, String nodeName) 
-	{
+	public static boolean contains(String[] c1, String nodeName) {
 		for (int i = 0; i < c1.length; i++)
 		{
 			if(c1[i].equals(nodeName))
@@ -181,15 +179,18 @@ public class Factor {
 					}
 				}
 				if(flag) {
-					this.probability[i] += f1.probability[j];
-					Algorithms.numOfPlus++;
+					if(this.probability[i] == 0)
+						this.probability[i] = f1.probability[j];
+					else {
+						this.probability[i] += f1.probability[j];
+						Algorithms.numOfPlus++;
+					}
 				}
 			}	
 		}
 	}
 
-	public static int get_index_by_value(String[] arr, String s) 
-	{
+	public static int get_index_by_value(String[] arr, String s) {
 		for (int i = 0; i < arr.length; i++)
 		{
 			if(arr[i].equals(s))
@@ -228,8 +229,7 @@ public class Factor {
 	}
 
 	// Removes the unwanted rows from the factor.
-	public void removeUnwantedDependecies() 
-	{
+	public void removeUnwantedDependecies() {
 		boolean[] flags = this.getZerosSwitch();
 		int size = 0;
 		for (int i = 0; i < flags.length; i++) {
@@ -238,11 +238,20 @@ public class Factor {
 		}
 		String[] dependents = new String[size];
 		int counter = 0;
-		for (int j = 0; j < this.dependent.length; j++) 
+		for (int j = 0; j < this.dependent.length; j++) {
 			if(!flags[j]) {
 				dependents[counter] = this.dependent[j];
 				counter++;
 			}
+		}
+		int div = 1;
+		for (int i = this.switchByVal.length-1; i >= 0; i--) {
+			if(this.switchByVal[i] == 0)
+				div *= Ex1.BN.get(this.dependent[i]).VarValues.length;
+			else
+				this.switchByVal[i] /= div;
+				
+		}
 		this.switchByVal = getNonZeroArr(this, flags);
 		this.dependent = dependents;
 	} 
@@ -277,7 +286,7 @@ public class Factor {
 			int rowOldFactor = 0, colOldFactor = 0, counter = 0;//, colNewFactor = 0
 			for (; rowOldFactor < f.probability.length; rowOldFactor++) {
 				for (; colOldFactor < f.dependent.length; colOldFactor++) {
-					if(!this.matrix[rowProb][Factor.get_index_by_value(this.dependent,f.dependent[colOldFactor])].equals(f.matrix[rowOldFactor][colOldFactor]))
+					if(!this.matrix[rowProb][get_index_by_value(this.dependent,f.dependent[colOldFactor])].equals(f.matrix[rowOldFactor][colOldFactor]))
 						break;
 					else
 						counter++;
@@ -320,30 +329,48 @@ public class Factor {
 		System.out.println();
 	}
 
-//	public void EliminateByTargetVal(String Thedependent, String targetVal) {
-//		this.switchByValElimination(this, targetVal);
-//		this.dependentElimination(this, Thedependent); 
-//		int counter=0;
-//		for (int i = 0; i < this.dependent.length; i++) {
-//			if(this.dependent[i].equals(Thedependent)) {
-//				for (int j = 0; j < this.matrix.length; j++) {
-//					if(this.matrix[i][j].equals(targetVal) )
-//						counter++;
-//				}
-//			}
-//		}
-//		double[] probability = new double[counter];
-//		counter=0;
-//		for (int i = 0; i < this.dependent.length; i++) {
-//			if(this.dependent[i].equals(Thedependent)) {
-//				for (int j = 0; j < this.matrix.length; j++) {
-//					if(this.matrix[i][j].equals(targetVal) ) {
-//						probability[counter] =this.probability[j];
-//						counter++;
-//					}
-//				}
-//			}
-//		}
-//		this.makeMatrix();
-//	}
+	public void EliminateByTargetVal(String theDependent, String targetVal) { 
+		this.probabilitylEliminate(theDependent, targetVal);
+		this.switchAndDependEliminate(theDependent, targetVal);
+		this.makeMatrix();
+		this.printFactor();
+	}
+	
+	private void switchAndDependEliminate(String theDependent, String targetVal) {
+		for (int i = 0; i < this.dependent.length; i++) {
+			if(this.dependent[i].equals(theDependent)) {
+				this.switchByVal[i] = 0;
+			}
+		}
+		removeUnwantedDependecies();
+	}
+
+	private void probabilitylEliminate(String theDependent, String targetVal) {
+		if(!contains(this.dependent, theDependent))
+			return;
+		int counter=0;
+		for (int i = 0; i < this.dependent.length; i++) {
+			if(this.dependent[i].equals(theDependent)) {
+				for (int j = 0; j < this.matrix.length; j++) {
+					if(this.matrix[j][i].equals(targetVal) )
+						counter++;
+				}
+			}
+		}
+		double[] probability = new double[counter];
+		counter=0;
+		for (int i = 0; i < this.dependent.length; i++) {
+			if(this.dependent[i].equals(theDependent)) {
+				for (int j = 0; j < this.matrix.length; j++) {
+					if(this.matrix[j][i].equals(targetVal) ) {
+						probability[counter] = this.probability[j];
+						counter++;
+					}
+				}
+			}
+		}
+		this.probability =probability;
+	}
+
+	
 }
