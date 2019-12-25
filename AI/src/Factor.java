@@ -371,7 +371,7 @@ public class Factor {
 				}
 			}
 		}
-		this.probability =probability;
+		this.probability = probability;
 	}
 
 

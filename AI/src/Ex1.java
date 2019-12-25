@@ -16,7 +16,7 @@ public class Ex1 {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException  {
-		boolean Dbag = true; // true || false
+		boolean Dbag = false; // true || false
 		File input = new File("input.txt");
 		Ex1.BN = new BayesianNetwork();
 		BufferedReader br = new BufferedReader(new FileReader(input)); 

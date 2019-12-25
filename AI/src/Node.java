@@ -137,16 +137,6 @@ public class Node {
 		}
 		f.dependent = pernts.split(",");
 		f.switchByVal = makeSwitch(f.dependent);
-//		f.switchByVal = new int[this.PrentSwithVal.length+1];
-//		
-//		for (int i = 0; i < this.PrentSwithVal.length; i++) {
-//				f.switchByVal[i+1] = this.PrentSwithVal[i] ;
-//		}
-//		
-//		if(f.switchByVal.length > 1)
-//			f.switchByVal[0] = f.switchByVal[1]*this.VarValues.length;
-//		else 
-//			f.switchByVal[0] = 1;
 		f.probability = probabilities;
 		f.makeMatrix();
 		return f;

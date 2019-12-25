@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 /**
@@ -44,10 +43,7 @@ public class Algorithms {
 				arrayF = tempArrayF;
 				i--;
 			}
-			if(!b)
-				arrayF[i].printFactor();
 		}
-//		Factor[] arrayF = arrayF_Init(q);
 		for (int i = 0; i < q.toEliminate.length; i++) 
 			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
 		Factor temp = arrayF[0];
@@ -57,12 +53,6 @@ public class Algorithms {
 		}
 		temp.normalize();
 		double prob;
-//		if(temp.findNumOfRows() == 1) {
-//			prob = temp.probability[0];
-//			prob  = round(prob, 5);
-//			System.out.println(String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
-//			return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
-//		}
 		prob = getfinalProbability(temp, q);
 		prob  = round(prob, 5);
 		System.out.println(String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
@@ -116,66 +106,18 @@ public class Algorithms {
 				for (int k = 0; k < q.GivenNodes.length; k++) {
 					if(Ex1.BN.get(lineage.get(i)).ParentsNames[j].equals(q.GivenNodes[k]))
 						flag = true;
-					
 				}
 				if(!flag  && !lineage.contains(Ex1.BN.get(lineage.get(i)).ParentsNames[j])  ) {
 					lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
 				}
-
 			}
-//			boolean flag = false;
-//			if(i == lineage.size()-1) {
-//				for (int j = 0; j < lineage.size(); j++) {
-//					for (int j2 = 0; j2 < Ex1.BN.get(lineage.get(j)).ParentsNames.length; j2++) {
-//						for (int k = 0; k < q.GivenNodes.length; k++) {
-//							if(Ex1.BN.get(lineage.get(j)).ParentsNames[j2].equals(q.GivenNodes[k]))
-//								flag = true;
-//						}
-//						if(!flag)
-//							lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
-//					}
-//					
-//					
-////					for (int k = 0; k < q.GivenNodes.length; k++) {
-////						for (int k2 = 0; k2 < Ex1.BN.get(lineage.get(j)).ParentsNames[j].length(); k2++) {
-////							if(Ex1.BN.get(lineage.get(j)).ParentsNames[k2].equals(q.GivenNodes[k])) {
-////								flag = false;
-////							}
-////						}
-////						if(flag)
-////							lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
-////					}
-//				}
-//				if(!flag)
-//					continue;
-//			}
 		}
 		Factor[] arrayF = new Factor[lineage.size()];
 		for (int i = 0; i < arrayF.length; i++) {
 			arrayF[i] = Ex1.BN.get(lineage.get(i)).cptFactor;
-//			if(Factor.contains(arrayF[i].dependent, q.target.name))
-//				arrayF[i].EliminateByTargetVal( q.target.name, q.valTarget); 
 			for (int j = 0; j < q.GivenNodes.length; j++) {
 				arrayF[i].EliminateByTargetVal( q.GivenNodes[j], q.GivenValsByNode[j]); 
 			}
-			
-			
-//			for (int j = 0; j < q.GivenNodes.length; j++) {
-//				if(Factor.contains(arrayF[i].dependent, q.GivenNodes[j])) {
-//					arrayF[i].removeGivens(q.GivenNodes[j], q.GivenValsByNode[j]);;
-//					arrayF[i].removeUnwantedDependecies();
-//					arrayF[i].makeMatrix();
-//					arrayF[i].
-//				}
-//			}
-//			for (int j = 0; j < q.GivenNodes.length; j++) {
-//				if(Factor.contains(arrayF[i].dependent, q.GivenNodes[j]))
-//					arrayF[i].removeGivens(q.GivenNodes[j], q.GivenValsByNode[j]);
-//			}
-//			arrayF[i].removeUnwantedDependecies();
-//			arrayF[i].makeMatrix();
-//			arrayF[i].probabilityElimination(f1, q.GivenNodes[j]);
-			arrayF[i].printFactor();
 		}
 		return arrayF;
 	}
@@ -280,10 +222,8 @@ public class Algorithms {
 	// Joins all the related Factors.
 	public static Factor joinAll(Factor[] farr, String toEliminate){
 		Factor f1 = farr[0];
-
 		for (int i = 1; i < farr.length; i++) {
 			f1 = join(f1, farr[i]);
-
 		}
 		f1 = f1.Elimination( toEliminate);
 		return f1;
@@ -291,7 +231,6 @@ public class Algorithms {
 
 	// Gets two Factors, joins them and returns the joined Factor.
 	private static Factor join(Factor f1, Factor f2) {
-		f2.printFactor();
 		f1.removeUnwantedDependecies();
 		f2.removeUnwantedDependecies();
 		Factor newfactor = new Factor();
@@ -319,7 +258,6 @@ public class Algorithms {
 		int counter = 0;
 		for ( ; counter < s1.length; counter++) 
 			newS[counter] = s1[counter];
-
 		for (int i = 0; i < s2.length; i++) {
 			if(!Factor.contains(s1,s2[i])) {
 				newS[counter+i] = s2[i];
@@ -350,36 +288,5 @@ public class Algorithms {
 		}
 		return flags;
 	}
-	//	// Creates the switchByVal array used in joining.
-	//	public static int[] makeSwitch(String[] dependent, int size) {
-	//		int[] switchByVal = new int[size];
-	//		int switch0 = 1;
-	//		for (int i = switchByVal.length-1; i >= 0; i--) {
-	//			switchByVal[i] = switch0;
-	//			switch0 *= Ex1.BN.get(dependent[i]).VarValues.length;
-	//		}
-	//		return switchByVal;
-	//	}
-	//	
-	// Creates the arrayF array from the gotten query.
-	@SuppressWarnings("unused")
-	private static Factor[] arrayF_Init(query q) {
-		Factor[] arrayF = new Factor[Ex1.BN.size()];
-		Iterator<Node> it = Ex1.BN.iteretor();
-		int cont = 0;
-		while(it.hasNext()) {
-			Node tempNode = it.next();
-			arrayF[cont] = tempNode.CTPtoFactor();
-//			if(Factor.contains(arrayF[cont].dependent,q.target.name))
-//				arrayF[cont].removeGivens(q.target.name, q.valTarget);
-//			for (int i = 0; i < q.GivenNodes.length; i++) {
-//				if(Factor.contains(arrayF[cont].dependent, q.GivenNodes[i]))
-//					arrayF[cont].removeGivens(q.GivenNodes[i], q.GivenValsByNode[i]);
-//			}
-//			arrayF[cont].removeUnwantedDependecies();
-//			arrayF[cont].makeMatrix();
-			cont++;
-		}
-		return arrayF;
-	}
+	
 }
