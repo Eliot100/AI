@@ -11,6 +11,8 @@ public class Factor {
 	 * Normalizes this Factor probability array (sum/probability)
 	 */
 	public void normalize() {
+		if(this.probability.length == 1)
+			return;
 		double sum = this.probability[0]; 
 		for (int i = 1; i < this.probability.length; i++){
 			sum+=this.probability[i];
@@ -333,7 +335,7 @@ public class Factor {
 		this.probabilitylEliminate(theDependent, targetVal);
 		this.switchAndDependEliminate(theDependent, targetVal);
 		this.makeMatrix();
-		this.printFactor();
+//		this.printFactor();
 	}
 	
 	private void switchAndDependEliminate(String theDependent, String targetVal) {
@@ -371,6 +373,7 @@ public class Factor {
 		}
 		this.probability =probability;
 	}
+
 
 	
 }

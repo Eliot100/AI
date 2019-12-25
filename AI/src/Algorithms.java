@@ -30,8 +30,23 @@ public class Algorithms {
 			return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 		}
 		Factor[] arrayF = getAllNeededFactors(q);
-		for (int i = 0; i < arrayF.length; i++) 
-			arrayF[i].printFactor();
+		for (int i = 0; i < arrayF.length; i++) {
+			boolean b = (arrayF[i].probability.length == 1);
+			if(b) {
+				int cont = 0;
+				Factor[] tempArrayF = new Factor[arrayF.length-1];
+				for (int j = 0; j < arrayF.length; j++) {
+					if(j != i) {
+						tempArrayF[cont] = arrayF[j];
+						cont++;
+					}
+				}
+				arrayF = tempArrayF;
+				i--;
+			}
+			if(!b)
+				arrayF[i].printFactor();
+		}
 //		Factor[] arrayF = arrayF_Init(q);
 		for (int i = 0; i < q.toEliminate.length; i++) 
 			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
@@ -40,7 +55,6 @@ public class Algorithms {
 			for (int i = 1; i < arrayF.length; i++) 
 				temp = join(temp, arrayF[i]);
 		}
-//		temp.printFactor();
 		temp.normalize();
 		double prob;
 //		if(temp.findNumOfRows() == 1) {
@@ -102,6 +116,7 @@ public class Algorithms {
 				for (int k = 0; k < q.GivenNodes.length; k++) {
 					if(Ex1.BN.get(lineage.get(i)).ParentsNames[j].equals(q.GivenNodes[k]))
 						flag = true;
+					
 				}
 				if(!flag  && !lineage.contains(Ex1.BN.get(lineage.get(i)).ParentsNames[j])  ) {
 					lineage.add(Ex1.BN.get(lineage.get(i)).ParentsNames[j]);
