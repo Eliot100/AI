@@ -29,17 +29,12 @@ public class Algorithms {
 			System.out.println(String.format("%.5f", prob)+",0,0");
 			return (String.format("%.5f", prob)+","+Algorithms.numOfPlus+","+Algorithms.numOfMul);
 		}
-
 		Factor[] arrayF = getAllNeededFactors(q);
 //		Factor[] arrayF = arrayF_Init(q);
-
 		for (int i = 0; i < arrayF.length; i++) 
 			arrayF[i].printFactor();
-
-
 		for (int i = 0; i < q.toEliminate.length; i++) 
 			arrayF = JoinAndEliminate( q.toEliminate[i], arrayF);
-
 		Factor temp = arrayF[0];
 		if(arrayF.length != 1) {
 			for (int i = 1; i < arrayF.length; i++) 
